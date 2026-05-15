@@ -1,1 +1,633 @@
-Partial patch - base HTML structure with RavenClaude header and initial sections
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesignFlow | RavenClaude Website Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --raven: #0f172a;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .step {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .wizard-container {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .nav-active {
+            background-color: #0f172a;
+            color: white;
+            border-radius: 9999px;
+        }
+
+        .section-header {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .form-input {
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+            border-color: #334155;
+        }
+
+        .raven-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
+        }
+
+        .step-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .metric {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <!-- Header -->
+    <header class="raven-header text-white">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center">
+                    <span class="text-3xl">🐦‍⬛</span>
+                </div>
+                <div>
+                    <span class="font-display text-2xl font-semibold tracking-tight">DesignFlow</span>
+                    <span class="text-slate-400 text-sm ml-1.5">by RavenClaude</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-x-4">
+                <button onclick="loadExampleData()" 
+                        class="px-4 py-2 text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors rounded-2xl flex items-center gap-x-2">
+                    <i class="fa-solid fa-magic mr-1.5"></i>
+                    <span>Load Raven Power Example</span>
+                </button>
+                
+                <button onclick="resetForm()" 
+                        class="px-4 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl flex items-center gap-x-2">
+                    <i class="fa-solid fa-undo"></i>
+                    <span class="hidden sm:inline">Reset</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 pt-8 pb-12">
+        <!-- Hero -->
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-x-2 bg-white shadow-sm border border-slate-200 rounded-3xl px-4 py-1.5 mb-4">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-slate-600">Interactive • Local • Export-ready</span>
+            </div>
+            
+            <h1 class="font-display text-5xl tracking-tighter font-semibold text-slate-900">Plan your website.<br>Build with clarity.</h1>
+            <p class="mt-3 text-xl text-slate-600 max-w-md mx-auto">A structured planning wizard that turns vague ideas into clear, actionable briefs and JSON for designers or AI builders.</p>
+        </div>
+
+        <!-- Progress -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-3 px-1">
+                <div class="text-sm font-semibold text-slate-700">Step <span id="current-step">1</span> of 6</div>
+                <div class="text-sm text-slate-500" id="progress-text">Project Overview</div>
+            </div>
+            <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-2 bg-slate-900 transition-all duration-500 rounded-full" style="width: 16.66%"></div>
+            </div>
+        </div>
+
+        <!-- Wizard Steps Navigation -->
+        <div class="flex flex-wrap gap-2 mb-8" id="step-nav">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Step Content -->
+        <div class="wizard-container bg-white border border-slate-200 shadow-xl shadow-slate-100 rounded-3xl p-8 md:p-10">
+            
+            <!-- Step 1: Project Overview -->
+            <div id="step-1" class="step">
+                <div class="flex items-center gap-x-3 mb-6">
+                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <span class="font-bold">1</span>
+                    </div>
+                    <div>
+                        <h2 class="section-header">Project Overview</h2>
+                        <p class="text-slate-600 text-sm">Tell us about the business and goals</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Business / Project Name</label>
+                        <input type="text" id="project-name" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Raven Power LLC">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Industry / Niche</label>
+                        <input type="text" id="industry" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Professional Services / Consulting">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">What is the main goal of this website?</label>
+                        <textarea id="project-goals" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Generate qualified leads, showcase expertise, support client onboarding..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Target Audience -->
+            <div id="step-2" class="step hidden">
+                <div class="flex items-center gap-x-3 mb-6">
+                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <span class="font-bold">2</span>
+                    </div>
+                    <div>
+                        <h2 class="section-header">Target Audience</h2>
+                        <p class="text-slate-600 text-sm">Who are we designing for?</p>
+                    </div>
+                </div>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Primary Audience Description</label>
+                        <textarea id="audience" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Small business owners in Florida looking for AI and automation consulting..."></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Key Pain Points</label>
+                            <input type="text" id="pain-points" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Time-consuming manual processes, lack of visibility...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Desired Outcomes</label>
+                            <input type="text" id="desired-outcomes" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Clear next steps, trust in expertise, easy contact...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Messaging & Content -->
+            <div id="step-3" class="step hidden">
+                <div class="flex items-center gap-x-3 mb-6">
+                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <span class="font-bold">3</span>
+                    </div>
+                    <div>
+                        <h2 class="section-header">Messaging &amp; Content Strategy</h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Core Value Proposition (one sentence)</label>
+                        <textarea id="value-prop" rows="2" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="We help ambitious professionals and businesses harness AI and automation to work smarter."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Tone &amp; Voice</label>
+                        <select id="tone" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm">
+                            <option value="Professional &amp; Approachable">Professional &amp; Approachable</option>
+                            <option value="Expert &amp; Confident">Expert &amp; Confident</option>
+                            <option value="Warm &amp; Supportive">Warm &amp; Supportive</option>
+                            <option value="Modern &amp; Direct">Modern &amp; Direct</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Features & Structure -->
+            <div id="step-4" class="step hidden">
+                <div class="flex items-center gap-x-3 mb-6">
+                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <span class="font-bold">4</span>
+                    </div>
+                    <div>
+                        <h2 class="section-header">Key Features &amp; Site Structure</h2>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Must-have pages / sections</label>
+                    <div class="flex flex-wrap gap-2" id="pages-container">
+                        <!-- JS populated chips -->
+                    </div>
+                    <div class="flex mt-3">
+                        <input type="text" id="new-page" placeholder="Add a page (e.g. Services, About)" 
+                               class="flex-1 border border-slate-300 rounded-l-2xl px-4 py-2.5 text-sm" onkeypress="if(event.key === 'Enter') addPageChip()">
+                        <button onclick="addPageChip()" class="px-5 bg-slate-900 text-white rounded-r-2xl text-sm font-medium">Add</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Key Features / Functionality</label>
+                    <textarea id="features" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Lead capture forms, blog, client portal, booking calendar, case studies..."></textarea>
+                </div>
+            </div>
+
+            <!-- Step 5: Design Direction -->
+            <div id="step-5" class="step hidden">
+                <div class="flex items-center gap-x-3 mb-6">
+                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <span class="font-bold">5</span>
+                    </div>
+                    <div>
+                        <h2 class="section-header">Design Direction &amp; Branding</h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Primary Color</label>
+                        <div class="flex items-center gap-x-3">
+                            <input type="color" id="primary-color" value="#0f172a" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
+                            <input type="text" id="primary-color-hex" value="#0f172a" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Accent Color</label>
+                        <div class="flex items-center gap-x-3">
+                            <input type="color" id="accent-color" value="#334155" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
+                            <input type="text" id="accent-color-hex" value="#334155" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Overall Vibe</label>
+                        <select id="vibe" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm">
+                            <option value="Modern Minimal">Modern Minimal</option>
+                            <option value="Warm Professional">Warm Professional</option>
+                            <option value="Bold &amp; Confident">Bold &amp; Confident</option>
+                            <option value="Clean &amp; Trustworthy">Clean &amp; Trustworthy</option>
+                            <option value="Creative &amp; Approachable">Creative &amp; Approachable</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Review & Export -->
+            <div id="step-6" class="step hidden">
+                <div class="flex items-center gap-x-3 mb-6">
+                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <span class="font-bold">6</span>
+                    </div>
+                    <div>
+                        <h2 class="section-header">Review &amp; Export</h2>
+                        <p class="text-slate-600 text-sm">Generate your structured brief and JSON</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6 mb-6">
+                    <h3 class="font-semibold mb-3 flex items-center gap-x-2">
+                        <i class="fa-solid fa-file-export text-slate-700"></i> 
+                        <span>Design Brief Summary</span>
+                    </h3>
+                    <div id="summary-preview" class="prose prose-sm max-w-none text-slate-700 text-[13.5px] leading-relaxed">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="exportJSON()" 
+                            class="flex-1 flex items-center justify-center gap-x-2 bg-slate-900 hover:bg-black transition-colors text-white font-semibold py-3.5 rounded-2xl text-sm">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Export as JSON</span>
+                    </button>
+                    
+                    <button onclick="copyBrief()" 
+                            class="flex-1 flex items-center justify-center gap-x-2 border border-slate-300 hover:bg-slate-50 transition-colors font-semibold py-3.5 rounded-2xl text-sm">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>Copy Design Brief (Markdown)</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mt-8 max-w-[980px] mx-auto">
+            <button onclick="prevStep()" id="btn-prev"
+                    class="px-6 py-3 rounded-2xl border border-slate-300 hover:bg-white font-medium flex items-center gap-x-2 text-sm disabled:opacity-40">
+                <i class="fa-solid fa-arrow-left"></i> <span>Previous</span>
+            </button>
+            
+            <button onclick="nextStep()" id="btn-next"
+                    class="px-8 py-3 bg-slate-900 hover:bg-black transition-colors text-white font-semibold rounded-2xl flex items-center gap-x-2 text-sm">
+                <span id="next-btn-text">Continue</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer class="text-center text-xs text-slate-500 pb-8">
+        Built with RavenClaude • Runs 100% in your browser • No data leaves your device
+    </footer>
+
+    <script>
+        // Tailwind script
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#0f172a');
+        }
+
+        let currentStep = 1;
+        const totalSteps = 6;
+
+        const stepTitles = [
+            "Project Overview",
+            "Target Audience",
+            "Messaging & Content Strategy",
+            "Key Features & Site Structure",
+            "Design Direction & Branding",
+            "Review & Export"
+        ];
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('current-step').textContent = currentStep;
+            document.getElementById('progress-text').textContent = stepTitles[currentStep - 1];
+        }
+
+        function updateStepNav() {
+            const container = document.getElementById('step-nav');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= totalSteps; i++) {
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-1.5 text-xs font-medium transition-all ${i === currentStep ? 'nav-active' : 'bg-white border border-slate-200 hover:bg-slate-50'} rounded-2xl`;
+                btn.innerHTML = `${i}. ${stepTitles[i-1]}`;
+                btn.onclick = () => goToStep(i);
+                container.appendChild(btn);
+            }
+        }
+
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(el => el.classList.add('hidden'));
+            // Show current
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+            
+            currentStep = step;
+            updateProgress();
+            updateStepNav();
+            
+            // Special handling for review step
+            if (step === 6) {
+                generateSummary();
+            }
+            
+            // Update button text
+            const nextBtn = document.getElementById('next-btn-text');
+            if (step === totalSteps) {
+                nextBtn.textContent = 'Finish';
+            } else {
+                nextBtn.textContent = 'Continue';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                showStep(currentStep + 1);
+            } else {
+                // On last step, maybe scroll to export or show success
+                alert('Great work! Your brief is ready. Export the JSON or copy the markdown brief.');
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
+        }
+
+        function goToStep(step) {
+            showStep(step);
+        }
+
+        // Page chips functionality
+        let pages = [];
+
+        function addPageChip() {
+            const input = document.getElementById('new-page');
+            const value = input.value.trim();
+            if (!value) return;
+            
+            pages.push(value);
+            renderPageChips();
+            input.value = '';
+        }
+
+        function renderPageChips() {
+            const container = document.getElementById('pages-container');
+            container.innerHTML = '';
+            
+            pages.forEach((page, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'inline-flex items-center bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-2xl';
+                chip.innerHTML = `
+                    ${page}
+                    <button onclick="removePageChip(${index})" class="ml-2 text-slate-400 hover:text-red-500">
+                        <i class="fa-solid fa-times text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(chip);
+            });
+        }
+
+        function removePageChip(index) {
+            pages.splice(index, 1);
+            renderPageChips();
+        }
+
+        function generateSummary() {
+            const summaryEl = document.getElementById('summary-preview');
+            
+            const data = collectFormData();
+            
+            let html = `<div class="space-y-4 text-sm">
+                <div><strong>Project:</strong> ${data.projectName || 'Not specified'}</div>
+                <div><strong>Industry:</strong> ${data.industry || 'Not specified'}</div>
+                <div><strong>Goals:</strong> ${data.goals || 'Not specified'}</div>
+                
+                <div class="pt-2 border-t"><strong>Audience:</strong> ${data.audience || 'Not specified'}</div>
+                
+                <div><strong>Value Proposition:</strong> ${data.valueProp || 'Not specified'}</div>
+                
+                <div class="pt-2 border-t"><strong>Key Pages:</strong> ${data.pages.length ? data.pages.join(', ') : 'Not specified'}</div>
+                <div><strong>Features:</strong> ${data.features || 'Not specified'}</div>
+                
+                <div class="pt-2 border-t"><strong>Design Vibe:</strong> ${data.vibe} (${data.primaryColor} / ${data.accentColor})</div>
+            </div>`;
+            
+            summaryEl.innerHTML = html;
+        }
+
+        function collectFormData() {
+            return {
+                projectName: document.getElementById('project-name').value,
+                industry: document.getElementById('industry').value,
+                goals: document.getElementById('project-goals').value,
+                audience: document.getElementById('audience').value,
+                painPoints: document.getElementById('pain-points').value,
+                desiredOutcomes: document.getElementById('desired-outcomes').value,
+                valueProp: document.getElementById('value-prop').value,
+                tone: document.getElementById('tone').value,
+                pages: [...pages],
+                features: document.getElementById('features').value,
+                primaryColor: document.getElementById('primary-color').value,
+                accentColor: document.getElementById('accent-color').value,
+                vibe: document.getElementById('vibe').value,
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        function exportJSON() {
+            const data = collectFormData();
+            const jsonStr = JSON.stringify(data, null, 2);
+            
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${(data.projectName || 'website-plan').toLowerCase().replace(/\s+/g, '-')}-designflow.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function copyBrief() {
+            const data = collectFormData();
+            
+            let brief = `# ${data.projectName || 'Website'} Design Brief\n\n`;
+            brief += `**Generated:** ${new Date().toLocaleDateString()}\n\n`;
+            brief += `## Project Overview\n${data.goals || 'No goals provided.'}\n\n`;
+            brief += `## Target Audience\n${data.audience || 'Not specified'}\n\n`;
+            brief += `## Value Proposition\n${data.valueProp || 'Not specified'}\n\n`;
+            brief += `## Key Pages\n${data.pages.length ? data.pages.map(p => `- ${p}`).join('\n') : '- None specified'}\n\n`;
+            brief += `## Features & Functionality\n${data.features || 'Not specified'}\n\n`;
+            brief += `## Design Direction\n- Vibe: ${data.vibe}\n- Primary: ${data.primaryColor}\n- Accent: ${data.accentColor}\n\n`;
+            brief += `---\n*Exported from DesignFlow by RavenClaude*`;
+            
+            navigator.clipboard.writeText(brief).then(() => {
+                const originalText = event.currentTarget ? event.currentTarget.innerHTML : '';
+                alert('Design brief copied to clipboard!');
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = brief;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Design brief copied to clipboard!');
+            });
+        }
+
+        function loadExampleData() {
+            // Pre-fill with realistic Raven Power example
+            document.getElementById('project-name').value = 'Raven Power LLC';
+            document.getElementById('industry').value = 'AI Consulting & Power Platform Solutions';
+            document.getElementById('project-goals').value = 'Attract ideal clients, showcase deep expertise in Microsoft Power Platform and agentic AI, and make it easy to start conversations.';
+            document.getElementById('audience').value = 'Business leaders, operations managers, and IT decision-makers in mid-market companies who are overwhelmed by manual processes and ready to modernize.';
+            document.getElementById('pain-points').value = 'Unclear automation opportunities, scattered data, slow internal processes';
+            document.getElementById('desired-outcomes').value = 'Clear understanding of capabilities, trust in delivery, easy way to engage';
+            document.getElementById('value-prop').value = 'We help ambitious teams unlock the full power of Microsoft 365 and AI with practical, production-grade solutions.';
+            document.getElementById('tone').value = 'Professional & Approachable';
+            
+            pages = ['Home', 'Services', 'Solutions', 'Insights', 'About', 'Contact'];
+            renderPageChips();
+            
+            document.getElementById('features').value = 'Lead capture forms, case study showcase, interactive service explainer, booking calendar, newsletter signup, client portal teaser';
+            
+            document.getElementById('primary-color').value = '#0f172a';
+            document.getElementById('primary-color-hex').value = '#0f172a';
+            document.getElementById('accent-color').value = '#475569';
+            document.getElementById('accent-color-hex').value = '#475569';
+            document.getElementById('vibe').value = 'Modern Minimal';
+            
+            // Go to review step to show results
+            showStep(6);
+        }
+
+        function resetForm() {
+            if (!confirm('Reset all fields?')) return;
+            
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.type === 'color') {
+                    el.value = el.id.includes('primary') ? '#0f172a' : '#334155';
+                } else if (el.tagName === 'SELECT') {
+                    el.selectedIndex = 0;
+                } else {
+                    el.value = '';
+                }
+            });
+            
+            pages = [];
+            renderPageChips();
+            document.getElementById('pages-container').innerHTML = '';
+            
+            // Reset to first step
+            showStep(1);
+        }
+
+        function setupColorSync() {
+            // Sync color pickers with hex inputs
+            const primaryColor = document.getElementById('primary-color');
+            const primaryHex = document.getElementById('primary-color-hex');
+            const accentColor = document.getElementById('accent-color');
+            const accentHex = document.getElementById('accent-color-hex');
+
+            primaryColor.addEventListener('input', () => primaryHex.value = primaryColor.value);
+            primaryHex.addEventListener('input', () => primaryColor.value = primaryHex.value);
+            
+            accentColor.addEventListener('input', () => accentHex.value = accentColor.value);
+            accentHex.addEventListener('input', () => accentColor.value = accentHex.value);
+        }
+
+        function init() {
+            initTailwind();
+            setupColorSync();
+            
+            // Initial page chips (empty)
+            renderPageChips();
+            
+            // Start on step 1
+            showStep(1);
+            
+            // Keyboard support
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' && currentStep < totalSteps) {
+                    nextStep();
+                }
+                if (e.key === 'ArrowLeft' && currentStep > 1) {
+                    prevStep();
+                }
+            });
+
+            // Make color hex inputs update nicely
+            console.log('%c[DesignFlow] RavenClaude WebsiteStarter initialized', 'color:#64748b');
+        }
+
+        // Boot the app
+        window.onload = init;
+    </script>
+</body>
+</html>
