@@ -9,12 +9,12 @@
 DesignFlow is a self-contained HTML tool that walks you through a professional website planning process:
 
 - Project goals & audience
-- Content strategy & messaging prompts
+- Content strategy & messaging prompts (headline, CTA, key message, tone)
 - Branding & visual direction (with live color tools)
-- Site structure & sitemap
+- Site structure as an ordered page list (sitemap order)
 - Features & technical requirements
-- Review + live preview
-- Export clean JSON + human-readable design brief
+- Review with a live color/copy preview
+- Export clean JSON + human-readable design brief (and re-import JSON later)
 
 The output is designed to be handed directly to a designer or AI builder (like RavenClaude) so the final website matches the vision with minimal back-and-forth.
 
@@ -22,22 +22,25 @@ The output is designed to be handed directly to a designer or AI builder (like R
 
 1. Open `index.html`
 2. (Optional) Click **"Load Raven Power Example"** to see it populated
-3. Work through the 6 steps
+3. Work through the 6 steps — drafts autosave in your browser
 4. In Step 6, export the JSON or copy the Design Brief
 5. Share the JSON with us — we'll build the real site
+6. (Optional) Use **Import** to reload a previous JSON export
 
 ## Files
 
-- `raven-logo.png` — RavenClaude / Raven Power brand logo (add your logo file here)
-- `index.html` — The full interactive wizard (uses the logo automatically)
+- `raven-logo.png` — optional brand logo (add your file here; both HTML pages fall back to an emoji if missing)
+- `index.html` — The full interactive wizard
 - `how-it-works.html` — Documentation & repo guide
 - `README.md` — This file
-
-The HTML files reference `raven-logo.png` with 🐦‍⬛ emoji fallback if the image is missing.
 
 ## Why it exists
 
 Most website projects suffer from unclear scope, vague messaging, and shifting requirements. DesignFlow forces clarity *before* design or code begins. The structured JSON output makes it especially powerful when working with AI tools.
+
+## Privacy
+
+Your form answers stay in this browser (local draft + export). Opening the HTML files may still load styling assets (Tailwind, Font Awesome, fonts) from CDNs.
 
 ## RavenClaude
 

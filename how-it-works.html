@@ -5,17 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>How DesignFlow Works | RavenClaude</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', system_ui, sans-serif; }
-        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .font-display { font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
     </style>
 </head>
 <body class="bg-slate-50">
     <div class="max-w-4xl mx-auto px-6 py-12">
         <div class="flex items-center gap-x-3 mb-8">
-            <div class="w-11 h-11 bg-slate-900 rounded-2xl flex items-center justify-center">
-                <span class="text-white text-3xl">🐦‍⬛</span>
+            <div class="w-11 h-11 bg-slate-900 rounded-2xl flex items-center justify-center overflow-hidden">
+                <img src="raven-logo.png" alt="RavenClaude" class="w-8 h-8 object-contain" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                <span class="text-white text-3xl hidden" aria-hidden="true">🐦‍⬛</span>
             </div>
             <div>
                 <span class="font-display text-3xl font-semibold tracking-tight">DesignFlow</span>
@@ -26,24 +33,24 @@
         <h1 class="font-display text-4xl tracking-tighter font-semibold mb-2">How DesignFlow Works</h1>
         <p class="text-xl text-slate-600 mb-10">A practical, local-first planning tool that produces clear outputs for humans and AI builders.</p>
 
-        <div class="prose prose-slate max-w-none">
-            <h2 class="font-semibold">The Problem It Solves</h2>
+        <div class="max-w-none text-slate-700 space-y-4">
+            <h2 class="font-semibold text-slate-900 text-lg">The Problem It Solves</h2>
             <p>Most website projects start with vague requirements. This leads to scope creep, mismatched expectations, and expensive revisions. DesignFlow forces structured thinking upfront.</p>
 
-            <h2 class="font-semibold mt-8">The 6-Step Flow</h2>
-            
-            <ol class="space-y-6 mt-4">
-                <li><strong>1. Project Overview</strong> — Define the business, industry, and high-level goals.</li>
-                <li><strong>2. Target Audience</strong> — Describe who you're building for and their pain points.</li>
-                <li><strong>3. Messaging &amp; Content Strategy</strong> — Nail the value proposition and tone.</li>
-                <li><strong>4. Features &amp; Site Structure</strong> — List key pages and functionality.</li>
-                <li><strong>5. Design Direction</strong> — Capture visual direction, colors, and overall vibe.</li>
-                <li><strong>6. Review &amp; Export</strong> — Get a clean JSON file + human-readable Markdown brief.</li>
+            <h2 class="font-semibold text-slate-900 text-lg mt-8">The 6-Step Flow</h2>
+
+            <ol class="space-y-6 mt-4 list-decimal list-inside">
+                <li><strong>Project Overview</strong> — Business name, industry/niche, and website goals.</li>
+                <li><strong>Target Audience</strong> — Who you're building for, pain points, and desired outcomes.</li>
+                <li><strong>Messaging &amp; Content Strategy</strong> — Value proposition, homepage headline, CTA, key message, and tone.</li>
+                <li><strong>Features &amp; Site Structure</strong> — Ordered page list (sitemap order), must-have features, and technical requirements (hosting, integrations, accessibility).</li>
+                <li><strong>Design Direction</strong> — Primary/accent colors and overall visual vibe.</li>
+                <li><strong>Review &amp; Export</strong> — Live color preview, summary, JSON download, and Markdown design brief. Drafts autosave in your browser; you can import a previous JSON export to continue editing.</li>
             </ol>
 
-            <h2 class="font-semibold mt-10">Perfect Companion for RavenClaude</h2>
+            <h2 class="font-semibold text-slate-900 text-lg mt-10">Perfect Companion for RavenClaude</h2>
             <p>The structured JSON output from DesignFlow is ideal input for RavenClaude agents, especially:</p>
-            <ul>
+            <ul class="list-disc list-inside space-y-1">
                 <li><strong>Web Strategist</strong></li>
                 <li><strong>UI/UX Designer</strong></li>
                 <li><strong>Information Architect</strong></li>
@@ -54,16 +61,18 @@
 
             <div class="mt-10 p-6 bg-white border border-slate-200 rounded-3xl">
                 <h3 class="font-semibold mb-2 flex items-center gap-x-2">
-                    <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                    <i class="fa-solid fa-lightbulb text-amber-500" aria-hidden="true"></i>
                     <span>Pro Tip</span>
                 </h3>
                 <p class="text-sm">After exporting the JSON, drop it into a new RavenClaude session along with any reference sites. The agents will use it as structured context to generate wireframes, copy, component specs, or even full implementation plans.</p>
             </div>
+
+            <p class="text-sm text-slate-500 mt-8">Privacy note: your answers stay in the browser (localStorage draft + local export). Styling libraries may still load from CDNs when you open the HTML files.</p>
         </div>
 
         <div class="mt-12 text-center">
             <a href="index.html" class="inline-flex items-center gap-x-2 px-6 py-3 bg-slate-900 text-white rounded-2xl text-sm font-semibold hover:bg-black transition-colors">
-                <span>Open the Wizard</span> <i class="fa-solid fa-arrow-right"></i>
+                <span>Open the Wizard</span> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
         </div>
     </div>
