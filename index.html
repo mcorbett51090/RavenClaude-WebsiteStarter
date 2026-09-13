@@ -5,20 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DesignFlow | RavenClaude Website Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
         :root {
             --raven: #0f172a;
         }
-        
+
         body {
-            font-family: 'Inter', system_ui, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
         }
-        
+
         .font-display {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
             font-weight: 600;
         }
 
@@ -53,157 +54,195 @@
             border-color: #334155;
         }
 
+        .form-input.invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+        }
+
         .raven-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         }
 
-        .step-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        .preview-shell {
+            background:
+                radial-gradient(circle at top left, color-mix(in srgb, var(--preview-accent) 28%, transparent), transparent 45%),
+                linear-gradient(160deg, color-mix(in srgb, var(--preview-primary) 92%, white), var(--preview-primary));
         }
 
-        .metric {
-            transition: all 0.3s ease;
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation: none !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 <body class="bg-slate-50">
-    <!-- Header -->
     <header class="raven-header text-white">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center">
-                    <span class="text-3xl">🐦‍⬛</span>
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-x-3 min-w-0">
+                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <img src="raven-logo.png" alt="RavenClaude" class="w-8 h-8 object-contain" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                    <span class="text-3xl hidden" aria-hidden="true">🐦‍⬛</span>
                 </div>
-                <div>
+                <div class="min-w-0">
                     <span class="font-display text-2xl font-semibold tracking-tight">DesignFlow</span>
                     <span class="text-slate-400 text-sm ml-1.5">by RavenClaude</span>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-x-4">
-                <button onclick="loadExampleData()" 
-                        class="px-4 py-2 text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors rounded-2xl flex items-center gap-x-2">
-                    <i class="fa-solid fa-magic mr-1.5"></i>
-                    <span>Load Raven Power Example</span>
+
+            <div class="flex items-center gap-x-2 sm:gap-x-4 flex-shrink-0">
+                <a href="how-it-works.html" id="link-how-it-works"
+                   class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl hidden sm:inline-flex items-center gap-x-2">
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                    <span>How it works</span>
+                </a>
+
+                <button type="button" id="btn-load-example"
+                        class="px-3 sm:px-4 py-2 text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors rounded-2xl inline-flex items-center gap-x-2"
+                        aria-label="Load Raven Power example data">
+                    <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                    <span class="hidden md:inline">Load Raven Power Example</span>
+                    <span class="md:hidden">Example</span>
                 </button>
-                
-                <button onclick="resetForm()" 
-                        class="px-4 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl flex items-center gap-x-2">
-                    <i class="fa-solid fa-undo"></i>
+
+                <button type="button" id="btn-import"
+                        class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl inline-flex items-center gap-x-2"
+                        aria-label="Import JSON plan">
+                    <i class="fa-solid fa-file-import" aria-hidden="true"></i>
+                    <span class="hidden sm:inline">Import</span>
+                </button>
+
+                <button type="button" id="btn-reset"
+                        class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl inline-flex items-center gap-x-2"
+                        aria-label="Reset form">
+                    <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
                     <span class="hidden sm:inline">Reset</span>
                 </button>
             </div>
         </div>
     </header>
 
+    <input type="file" id="json-import" accept="application/json,.json" class="hidden" aria-hidden="true">
+
     <div class="max-w-7xl mx-auto px-6 pt-8 pb-12">
-        <!-- Hero -->
         <div class="text-center mb-10">
             <div class="inline-flex items-center gap-x-2 bg-white shadow-sm border border-slate-200 rounded-3xl px-4 py-1.5 mb-4">
-                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span class="text-sm font-medium text-slate-600">Interactive • Local • Export-ready</span>
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" aria-hidden="true"></div>
+                <span class="text-sm font-medium text-slate-600">Interactive • Local drafts • Export-ready</span>
             </div>
-            
-            <h1 class="font-display text-5xl tracking-tighter font-semibold text-slate-900">Plan your website.<br>Build with clarity.</h1>
-            <p class="mt-3 text-xl text-slate-600 max-w-md mx-auto">A structured planning wizard that turns vague ideas into clear, actionable briefs and JSON for designers or AI builders.</p>
+
+            <h1 class="font-display text-4xl sm:text-5xl tracking-tighter font-semibold text-slate-900">Plan your website.<br>Build with clarity.</h1>
+            <p class="mt-3 text-lg sm:text-xl text-slate-600 max-w-xl mx-auto">A structured planning wizard that turns vague ideas into clear briefs and JSON for designers or AI builders.</p>
         </div>
 
-        <!-- Progress -->
-        <div class="mb-8">
+        <div class="mb-8 max-w-[980px] mx-auto">
             <div class="flex items-center justify-between mb-3 px-1">
                 <div class="text-sm font-semibold text-slate-700">Step <span id="current-step">1</span> of 6</div>
                 <div class="text-sm text-slate-500" id="progress-text">Project Overview</div>
             </div>
-            <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+            <div class="h-2 bg-slate-200 rounded-full overflow-hidden"
+                 role="progressbar"
+                 aria-valuemin="1"
+                 aria-valuemax="6"
+                 aria-valuenow="1"
+                 aria-labelledby="progress-text"
+                 id="progress-track">
                 <div id="progress-bar" class="h-2 bg-slate-900 transition-all duration-500 rounded-full" style="width: 16.66%"></div>
             </div>
         </div>
 
-        <!-- Wizard Steps Navigation -->
-        <div class="flex flex-wrap gap-2 mb-8" id="step-nav">
-            <!-- Populated by JS -->
-        </div>
+        <nav class="flex flex-wrap gap-2 mb-8 max-w-[980px] mx-auto" id="step-nav" aria-label="Wizard steps"></nav>
 
-        <!-- Step Content -->
-        <div class="wizard-container bg-white border border-slate-200 shadow-xl shadow-slate-100 rounded-3xl p-8 md:p-10">
-            
-            <!-- Step 1: Project Overview -->
+        <div class="wizard-container bg-white border border-slate-200 shadow-xl shadow-slate-100 rounded-3xl p-6 sm:p-8 md:p-10">
+
             <div id="step-1" class="step">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">1</span>
                     </div>
                     <div>
-                        <h2 class="section-header">Project Overview</h2>
+                        <h2 class="section-header" tabindex="-1">Project Overview</h2>
                         <p class="text-slate-600 text-sm">Tell us about the business and goals</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Business / Project Name</label>
-                        <input type="text" id="project-name" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Raven Power LLC">
+                        <label for="project-name" class="block text-sm font-medium text-slate-700 mb-1.5">Business / Project Name</label>
+                        <input type="text" id="project-name" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Raven Power LLC" autocomplete="organization">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Industry / Niche</label>
+                        <label for="industry" class="block text-sm font-medium text-slate-700 mb-1.5">Industry / Niche</label>
                         <input type="text" id="industry" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Professional Services / Consulting">
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">What is the main goal of this website?</label>
+                        <label for="project-goals" class="block text-sm font-medium text-slate-700 mb-1.5">What is the main goal of this website?</label>
                         <textarea id="project-goals" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Generate qualified leads, showcase expertise, support client onboarding..."></textarea>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 2: Target Audience -->
             <div id="step-2" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">2</span>
                     </div>
                     <div>
-                        <h2 class="section-header">Target Audience</h2>
+                        <h2 class="section-header" tabindex="-1">Target Audience</h2>
                         <p class="text-slate-600 text-sm">Who are we designing for?</p>
                     </div>
                 </div>
 
                 <div class="space-y-5">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Primary Audience Description</label>
+                        <label for="audience" class="block text-sm font-medium text-slate-700 mb-1.5">Primary Audience Description</label>
                         <textarea id="audience" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Small business owners in Florida looking for AI and automation consulting..."></textarea>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Key Pain Points</label>
+                            <label for="pain-points" class="block text-sm font-medium text-slate-700 mb-1.5">Key Pain Points</label>
                             <input type="text" id="pain-points" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Time-consuming manual processes, lack of visibility...">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Desired Outcomes</label>
+                            <label for="desired-outcomes" class="block text-sm font-medium text-slate-700 mb-1.5">Desired Outcomes</label>
                             <input type="text" id="desired-outcomes" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Clear next steps, trust in expertise, easy contact...">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 3: Messaging & Content -->
             <div id="step-3" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">3</span>
                     </div>
                     <div>
-                        <h2 class="section-header">Messaging &amp; Content Strategy</h2>
+                        <h2 class="section-header" tabindex="-1">Messaging &amp; Content Strategy</h2>
+                        <p class="text-slate-600 text-sm">Value prop, tone, and starter copy prompts</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Core Value Proposition (one sentence)</label>
+                    <div class="md:col-span-2">
+                        <label for="value-prop" class="block text-sm font-medium text-slate-700 mb-1.5">Core Value Proposition (one sentence)</label>
                         <textarea id="value-prop" rows="2" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="We help ambitious professionals and businesses harness AI and automation to work smarter."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Tone &amp; Voice</label>
+                        <label for="headline" class="block text-sm font-medium text-slate-700 mb-1.5">Homepage Headline Prompt</label>
+                        <input type="text" id="headline" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Clarity before code. Strategy before screens.">
+                    </div>
+                    <div>
+                        <label for="cta" class="block text-sm font-medium text-slate-700 mb-1.5">Primary CTA Prompt</label>
+                        <input type="text" id="cta" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Book a discovery call">
+                    </div>
+                    <div>
+                        <label for="key-message" class="block text-sm font-medium text-slate-700 mb-1.5">Supporting Key Message</label>
+                        <input type="text" id="key-message" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Practical AI systems that ship, not slide decks.">
+                    </div>
+                    <div>
+                        <label for="tone" class="block text-sm font-medium text-slate-700 mb-1.5">Tone &amp; Voice</label>
                         <select id="tone" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm">
                             <option value="Professional &amp; Approachable">Professional &amp; Approachable</option>
                             <option value="Expert &amp; Confident">Expert &amp; Confident</option>
@@ -214,63 +253,68 @@
                 </div>
             </div>
 
-            <!-- Step 4: Features & Structure -->
             <div id="step-4" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">4</span>
                     </div>
                     <div>
-                        <h2 class="section-header">Key Features &amp; Site Structure</h2>
+                        <h2 class="section-header" tabindex="-1">Key Features &amp; Site Structure</h2>
+                        <p class="text-slate-600 text-sm">Ordered page list, features, and technical needs</p>
                     </div>
                 </div>
 
                 <div class="mb-5">
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Must-have pages / sections</label>
-                    <div class="flex flex-wrap gap-2" id="pages-container">
-                        <!-- JS populated chips -->
-                    </div>
+                    <label for="new-page" class="block text-sm font-medium text-slate-700 mb-2">Must-have pages (sitemap order)</label>
+                    <div class="flex flex-wrap gap-2 min-h-[2rem]" id="pages-container" aria-live="polite"></div>
                     <div class="flex mt-3">
-                        <input type="text" id="new-page" placeholder="Add a page (e.g. Services, About)" 
-                               class="flex-1 border border-slate-300 rounded-l-2xl px-4 py-2.5 text-sm" onkeypress="if(event.key === 'Enter') addPageChip()">
-                        <button onclick="addPageChip()" class="px-5 bg-slate-900 text-white rounded-r-2xl text-sm font-medium">Add</button>
+                        <input type="text" id="new-page" placeholder="Add a page (e.g. Services, About)"
+                               class="flex-1 border border-slate-300 rounded-l-2xl px-4 py-2.5 text-sm form-input"
+                               aria-describedby="page-hint">
+                        <button type="button" onclick="addPageChip()" class="px-5 bg-slate-900 text-white rounded-r-2xl text-sm font-medium">Add</button>
                     </div>
+                    <p id="page-hint" class="text-xs text-slate-500 mt-2">Order matters — first page is treated as the homepage entry. Duplicates are ignored.</p>
+                </div>
+
+                <div class="mb-5">
+                    <label for="features" class="block text-sm font-medium text-slate-700 mb-2">Key Features / Functionality</label>
+                    <textarea id="features" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Lead capture forms, blog, client portal, booking calendar, case studies..."></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Key Features / Functionality</label>
-                    <textarea id="features" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Lead capture forms, blog, client portal, booking calendar, case studies..."></textarea>
+                    <label for="tech-requirements" class="block text-sm font-medium text-slate-700 mb-2">Technical Requirements</label>
+                    <textarea id="tech-requirements" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Hosting (Vercel/Azure), CMS preference, integrations (HubSpot, Calendly), accessibility target, analytics..."></textarea>
                 </div>
             </div>
 
-            <!-- Step 5: Design Direction -->
             <div id="step-5" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">5</span>
                     </div>
                     <div>
-                        <h2 class="section-header">Design Direction &amp; Branding</h2>
+                        <h2 class="section-header" tabindex="-1">Design Direction &amp; Branding</h2>
+                        <p class="text-slate-600 text-sm">Colors and overall visual vibe</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Primary Color</label>
+                        <label for="primary-color" class="block text-sm font-medium text-slate-700 mb-2">Primary Color</label>
                         <div class="flex items-center gap-x-3">
                             <input type="color" id="primary-color" value="#0f172a" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
-                            <input type="text" id="primary-color-hex" value="#0f172a" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono">
+                            <input type="text" id="primary-color-hex" value="#0f172a" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Primary color hex" spellcheck="false">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Accent Color</label>
+                        <label for="accent-color" class="block text-sm font-medium text-slate-700 mb-2">Accent Color</label>
                         <div class="flex items-center gap-x-3">
                             <input type="color" id="accent-color" value="#334155" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
-                            <input type="text" id="accent-color-hex" value="#334155" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono">
+                            <input type="text" id="accent-color-hex" value="#334155" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Accent color hex" spellcheck="false">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Overall Vibe</label>
+                        <label for="vibe" class="block text-sm font-medium text-slate-700 mb-2">Overall Vibe</label>
                         <select id="vibe" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm">
                             <option value="Modern Minimal">Modern Minimal</option>
                             <option value="Warm Professional">Warm Professional</option>
@@ -282,38 +326,47 @@
                 </div>
             </div>
 
-            <!-- Step 6: Review & Export -->
             <div id="step-6" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">6</span>
                     </div>
                     <div>
-                        <h2 class="section-header">Review &amp; Export</h2>
-                        <p class="text-slate-600 text-sm">Generate your structured brief and JSON</p>
+                        <h2 class="section-header" tabindex="-1">Review &amp; Export</h2>
+                        <p class="text-slate-600 text-sm">Live preview, structured brief, and JSON export</p>
                     </div>
+                </div>
+
+                <div id="live-preview" class="preview-shell rounded-3xl p-6 mb-6 text-white overflow-hidden border border-slate-800/20" style="--preview-primary:#0f172a; --preview-accent:#334155;">
+                    <div class="text-xs uppercase tracking-[0.2em] text-white/70 mb-3">Live preview</div>
+                    <div class="font-display text-3xl tracking-tight mb-2" id="preview-brand">Your Brand</div>
+                    <p class="text-white/90 text-base max-w-xl mb-5" id="preview-headline">Your homepage headline will appear here.</p>
+                    <div class="inline-flex items-center gap-x-2 px-4 py-2 rounded-2xl text-sm font-semibold" id="preview-cta" style="background: color-mix(in srgb, var(--preview-accent) 85%, white); color: #0f172a;">
+                        Primary CTA
+                    </div>
+                    <div class="mt-6 flex flex-wrap gap-2 text-xs text-white/80" id="preview-pages"></div>
                 </div>
 
                 <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6 mb-6">
                     <h3 class="font-semibold mb-3 flex items-center gap-x-2">
-                        <i class="fa-solid fa-file-export text-slate-700"></i> 
+                        <i class="fa-solid fa-file-export text-slate-700" aria-hidden="true"></i>
                         <span>Design Brief Summary</span>
                     </h3>
-                    <div id="summary-preview" class="prose prose-sm max-w-none text-slate-700 text-[13.5px] leading-relaxed">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div id="summary-preview" class="max-w-none text-slate-700 text-[13.5px] leading-relaxed"></div>
                 </div>
 
+                <p id="export-status" class="text-sm text-slate-500 mb-3" aria-live="polite"></p>
+
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <button onclick="exportJSON()" 
+                    <button type="button" onclick="exportJSON()"
                             class="flex-1 flex items-center justify-center gap-x-2 bg-slate-900 hover:bg-black transition-colors text-white font-semibold py-3.5 rounded-2xl text-sm">
-                        <i class="fa-solid fa-download"></i>
+                        <i class="fa-solid fa-download" aria-hidden="true"></i>
                         <span>Export as JSON</span>
                     </button>
-                    
-                    <button onclick="copyBrief()" 
+
+                    <button type="button" id="copy-brief-btn" onclick="copyBrief(this)"
                             class="flex-1 flex items-center justify-center gap-x-2 border border-slate-300 hover:bg-slate-50 transition-colors font-semibold py-3.5 rounded-2xl text-sm">
-                        <i class="fa-solid fa-copy"></i>
+                        <i class="fa-solid fa-copy" aria-hidden="true"></i>
                         <span>Copy Design Brief (Markdown)</span>
                     </button>
                 </div>
@@ -321,131 +374,249 @@
 
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="flex justify-between mt-8 max-w-[980px] mx-auto">
-            <button onclick="prevStep()" id="btn-prev"
-                    class="px-6 py-3 rounded-2xl border border-slate-300 hover:bg-white font-medium flex items-center gap-x-2 text-sm disabled:opacity-40">
-                <i class="fa-solid fa-arrow-left"></i> <span>Previous</span>
+        <div class="flex justify-between mt-8 max-w-[980px] mx-auto gap-3">
+            <button type="button" onclick="prevStep()" id="btn-prev"
+                    class="px-6 py-3 rounded-2xl border border-slate-300 hover:bg-white font-medium inline-flex items-center gap-x-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>Previous</span>
             </button>
-            
-            <button onclick="nextStep()" id="btn-next"
-                    class="px-8 py-3 bg-slate-900 hover:bg-black transition-colors text-white font-semibold rounded-2xl flex items-center gap-x-2 text-sm">
-                <span id="next-btn-text">Continue</span> <i class="fa-solid fa-arrow-right"></i>
+
+            <button type="button" onclick="nextStep()" id="btn-next"
+                    class="px-8 py-3 bg-slate-900 hover:bg-black transition-colors text-white font-semibold rounded-2xl inline-flex items-center gap-x-2 text-sm">
+                <span id="next-btn-text">Continue</span> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
         </div>
     </div>
 
-    <footer class="text-center text-xs text-slate-500 pb-8">
-        Built with RavenClaude • Runs 100% in your browser • No data leaves your device
+    <footer class="text-center text-xs text-slate-500 pb-8 px-6">
+        Built with RavenClaude • Your form answers stay in this browser (draft autosave + export)
+        <span class="mx-1">•</span>
+        Styling assets may load from CDNs
+        <span class="mx-1">•</span>
+        <a href="how-it-works.html" class="underline hover:text-slate-700">How it works</a>
     </footer>
 
     <script>
-        // Tailwind script
-        function initTailwind() {
-            document.documentElement.style.setProperty('--accent', '#0f172a');
-        }
+        const STORAGE_KEY = 'designflow-draft-v1';
+        const DEFAULT_PRIMARY = '#0f172a';
+        const DEFAULT_ACCENT = '#334155';
+        const HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
         let currentStep = 1;
         const totalSteps = 6;
+        let pages = [];
+        let saveTimer = null;
 
         const stepTitles = [
-            "Project Overview",
-            "Target Audience",
-            "Messaging & Content Strategy",
-            "Key Features & Site Structure",
-            "Design Direction & Branding",
-            "Review & Export"
+            'Project Overview',
+            'Target Audience',
+            'Messaging & Content Strategy',
+            'Key Features & Site Structure',
+            'Design Direction & Branding',
+            'Review & Export'
         ];
+
+        const fieldIds = [
+            'project-name', 'industry', 'project-goals',
+            'audience', 'pain-points', 'desired-outcomes',
+            'value-prop', 'headline', 'cta', 'key-message', 'tone',
+            'features', 'tech-requirements',
+            'primary-color', 'primary-color-hex', 'accent-color', 'accent-color-hex', 'vibe'
+        ];
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function isEditableTarget(el) {
+            if (!el || el === document.body) return false;
+            const tag = (el.tagName || '').toLowerCase();
+            if (tag === 'input' || tag === 'textarea' || tag === 'select' || tag === 'button' || tag === 'a' || tag === 'summary' || tag === 'option') {
+                return true;
+            }
+            if (el.isContentEditable) return true;
+            if (el.closest && el.closest('button, a, [role="button"], [contenteditable="true"]')) return true;
+            return false;
+        }
+
+        function normalizeHex(value, expandShort = true) {
+            if (!value) return null;
+            let hex = String(value).trim();
+            if (!hex.startsWith('#')) hex = `#${hex}`;
+            if (!HEX_RE.test(hex)) return null;
+            hex = hex.toLowerCase();
+            if (hex.length === 4) {
+                if (!expandShort) return hex;
+                hex = `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
+            }
+            return hex;
+        }
+
+        function setColorPair(kind, hex, markInvalid = false) {
+            const normalized = normalizeHex(hex, true);
+            const picker = document.getElementById(`${kind}-color`);
+            const text = document.getElementById(`${kind}-color-hex`);
+            if (!normalized) {
+                if (markInvalid) text.classList.add('invalid');
+                return false;
+            }
+            text.classList.remove('invalid');
+            picker.value = normalized;
+            text.value = normalized;
+            return true;
+        }
+
+        function resolveColor(kind) {
+            const textVal = document.getElementById(`${kind}-color-hex`).value;
+            const pickerVal = document.getElementById(`${kind}-color`).value;
+            // Prefer complete 6-digit typed values only. Do not expand 3-digit mid-entry
+            // (e.g. `#0f1`) into `#00ff11` during autosave — expansion happens on blur/export.
+            const asTyped = normalizeHex(textVal, false);
+            if (asTyped && asTyped.length === 7) return asTyped;
+            return normalizeHex(pickerVal, true) || (kind === 'primary' ? DEFAULT_PRIMARY : DEFAULT_ACCENT);
+        }
+
+        function commitColorsToInputs() {
+            setColorPair('primary', resolveColor('primary'), true);
+            setColorPair('accent', resolveColor('accent'), true);
+        }
+
+        function sanitizeFilename(name) {
+            const cleaned = String(name || 'website-plan')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 80);
+            return cleaned || 'website-plan';
+        }
 
         function updateProgress() {
             const progress = (currentStep / totalSteps) * 100;
             document.getElementById('progress-bar').style.width = `${progress}%`;
             document.getElementById('current-step').textContent = currentStep;
             document.getElementById('progress-text').textContent = stepTitles[currentStep - 1];
+            const track = document.getElementById('progress-track');
+            track.setAttribute('aria-valuenow', String(currentStep));
+            track.setAttribute('aria-valuetext', `Step ${currentStep} of ${totalSteps}: ${stepTitles[currentStep - 1]}`);
+        }
+
+        function updateNavButtons() {
+            const prev = document.getElementById('btn-prev');
+            prev.disabled = currentStep === 1;
+            const nextBtn = document.getElementById('next-btn-text');
+            nextBtn.textContent = currentStep === totalSteps ? 'Jump to export' : 'Continue';
         }
 
         function updateStepNav() {
             const container = document.getElementById('step-nav');
-            container.innerHTML = '';
-            
-            for (let i = 1; i <= totalSteps; i++) {
-                const btn = document.createElement('button');
-                btn.className = `px-4 py-1.5 text-xs font-medium transition-all ${i === currentStep ? 'nav-active' : 'bg-white border border-slate-200 hover:bg-slate-50'} rounded-2xl`;
-                btn.innerHTML = `${i}. ${stepTitles[i-1]}`;
-                btn.onclick = () => goToStep(i);
-                container.appendChild(btn);
+            const existing = Array.from(container.querySelectorAll('button'));
+            if (existing.length !== totalSteps) {
+                container.innerHTML = '';
+                for (let i = 1; i <= totalSteps; i++) {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.dataset.step = String(i);
+                    btn.textContent = `${i}. ${stepTitles[i - 1]}`;
+                    btn.addEventListener('click', () => goToStep(i));
+                    container.appendChild(btn);
+                }
             }
+
+            container.querySelectorAll('button').forEach((btn) => {
+                const i = Number(btn.dataset.step);
+                const active = i === currentStep;
+                btn.className = `px-4 py-1.5 text-xs font-medium transition-all rounded-2xl ${active ? 'nav-active' : 'bg-white border border-slate-200 hover:bg-slate-50'}`;
+                if (active) btn.setAttribute('aria-current', 'step');
+                else btn.removeAttribute('aria-current');
+            });
         }
 
-        function showStep(step) {
-            // Hide all steps
-            document.querySelectorAll('.step').forEach(el => el.classList.add('hidden'));
-            // Show current
+        function showStep(step, { focus = true } = {}) {
+            document.querySelectorAll('.step').forEach((el) => el.classList.add('hidden'));
             document.getElementById(`step-${step}`).classList.remove('hidden');
-            
+
             currentStep = step;
             updateProgress();
             updateStepNav();
-            
-            // Special handling for review step
+            updateNavButtons();
+
             if (step === 6) {
                 generateSummary();
             }
-            
-            // Update button text
-            const nextBtn = document.getElementById('next-btn-text');
-            if (step === totalSteps) {
-                nextBtn.textContent = 'Finish';
-            } else {
-                nextBtn.textContent = 'Continue';
+
+            if (focus) {
+                const heading = document.querySelector(`#step-${step} h2`);
+                if (heading) heading.focus({ preventScroll: false });
             }
+
+            scheduleSave();
         }
 
         function nextStep() {
             if (currentStep < totalSteps) {
                 showStep(currentStep + 1);
-            } else {
-                // On last step, maybe scroll to export or show success
-                alert('Great work! Your brief is ready. Export the JSON or copy the markdown brief.');
+                return;
             }
+            const status = document.getElementById('export-status');
+            status.textContent = 'Brief ready — export JSON or copy the Markdown brief below.';
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            document.getElementById('copy-brief-btn').scrollIntoView({
+                behavior: prefersReduced ? 'auto' : 'smooth',
+                block: 'center'
+            });
         }
 
         function prevStep() {
-            if (currentStep > 1) {
-                showStep(currentStep - 1);
-            }
+            if (currentStep > 1) showStep(currentStep - 1);
         }
 
         function goToStep(step) {
             showStep(step);
         }
 
-        // Page chips functionality
-        let pages = [];
-
         function addPageChip() {
             const input = document.getElementById('new-page');
             const value = input.value.trim();
             if (!value) return;
-            
+
+            const exists = pages.some((p) => p.toLowerCase() === value.toLowerCase());
+            if (exists) {
+                input.classList.add('invalid');
+                input.setAttribute('aria-invalid', 'true');
+                return;
+            }
+
+            input.classList.remove('invalid');
+            input.removeAttribute('aria-invalid');
             pages.push(value);
             renderPageChips();
             input.value = '';
+            scheduleSave();
         }
 
         function renderPageChips() {
             const container = document.getElementById('pages-container');
-            container.innerHTML = '';
-            
+            container.replaceChildren();
+
             pages.forEach((page, index) => {
                 const chip = document.createElement('div');
                 chip.className = 'inline-flex items-center bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-2xl';
-                chip.innerHTML = `
-                    ${page}
-                    <button onclick="removePageChip(${index})" class="ml-2 text-slate-400 hover:text-red-500">
-                        <i class="fa-solid fa-times text-xs"></i>
-                    </button>
-                `;
+
+                const label = document.createElement('span');
+                label.textContent = page;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'ml-2 text-slate-400 hover:text-red-500';
+                removeBtn.setAttribute('aria-label', `Remove ${page}`);
+                removeBtn.innerHTML = '<i class="fa-solid fa-xmark text-xs" aria-hidden="true"></i>';
+                removeBtn.addEventListener('click', () => removePageChip(index));
+
+                chip.append(label, removeBtn);
                 container.appendChild(chip);
             });
         }
@@ -453,180 +624,415 @@
         function removePageChip(index) {
             pages.splice(index, 1);
             renderPageChips();
+            scheduleSave();
         }
 
-        function generateSummary() {
-            const summaryEl = document.getElementById('summary-preview');
-            
-            const data = collectFormData();
-            
-            let html = `<div class="space-y-4 text-sm">
-                <div><strong>Project:</strong> ${data.projectName || 'Not specified'}</div>
-                <div><strong>Industry:</strong> ${data.industry || 'Not specified'}</div>
-                <div><strong>Goals:</strong> ${data.goals || 'Not specified'}</div>
-                
-                <div class="pt-2 border-t"><strong>Audience:</strong> ${data.audience || 'Not specified'}</div>
-                
-                <div><strong>Value Proposition:</strong> ${data.valueProp || 'Not specified'}</div>
-                
-                <div class="pt-2 border-t"><strong>Key Pages:</strong> ${data.pages.length ? data.pages.join(', ') : 'Not specified'}</div>
-                <div><strong>Features:</strong> ${data.features || 'Not specified'}</div>
-                
-                <div class="pt-2 border-t"><strong>Design Vibe:</strong> ${data.vibe} (${data.primaryColor} / ${data.accentColor})</div>
-            </div>`;
-            
-            summaryEl.innerHTML = html;
-        }
+        function collectFormData({ commitColors = false } = {}) {
+            if (commitColors) commitColorsToInputs();
 
-        function collectFormData() {
             return {
-                projectName: document.getElementById('project-name').value,
-                industry: document.getElementById('industry').value,
-                goals: document.getElementById('project-goals').value,
-                audience: document.getElementById('audience').value,
-                painPoints: document.getElementById('pain-points').value,
-                desiredOutcomes: document.getElementById('desired-outcomes').value,
-                valueProp: document.getElementById('value-prop').value,
+                projectName: document.getElementById('project-name').value.trim(),
+                industry: document.getElementById('industry').value.trim(),
+                goals: document.getElementById('project-goals').value.trim(),
+                audience: document.getElementById('audience').value.trim(),
+                painPoints: document.getElementById('pain-points').value.trim(),
+                desiredOutcomes: document.getElementById('desired-outcomes').value.trim(),
+                valueProp: document.getElementById('value-prop').value.trim(),
+                headline: document.getElementById('headline').value.trim(),
+                cta: document.getElementById('cta').value.trim(),
+                keyMessage: document.getElementById('key-message').value.trim(),
                 tone: document.getElementById('tone').value,
                 pages: [...pages],
-                features: document.getElementById('features').value,
-                primaryColor: document.getElementById('primary-color').value,
-                accentColor: document.getElementById('accent-color').value,
+                features: document.getElementById('features').value.trim(),
+                techRequirements: document.getElementById('tech-requirements').value.trim(),
+                primaryColor: resolveColor('primary'),
+                accentColor: resolveColor('accent'),
                 vibe: document.getElementById('vibe').value,
                 timestamp: new Date().toISOString()
             };
         }
 
+        function applyFormData(data) {
+            if (!data || typeof data !== 'object') return;
+
+            document.getElementById('project-name').value = data.projectName || '';
+            document.getElementById('industry').value = data.industry || '';
+            document.getElementById('project-goals').value = data.goals || '';
+            document.getElementById('audience').value = data.audience || '';
+            document.getElementById('pain-points').value = data.painPoints || '';
+            document.getElementById('desired-outcomes').value = data.desiredOutcomes || '';
+            document.getElementById('value-prop').value = data.valueProp || '';
+            document.getElementById('headline').value = data.headline || '';
+            document.getElementById('cta').value = data.cta || '';
+            document.getElementById('key-message').value = data.keyMessage || '';
+            if (data.tone) document.getElementById('tone').value = data.tone;
+            document.getElementById('features').value = data.features || '';
+            document.getElementById('tech-requirements').value = data.techRequirements || '';
+            if (data.vibe) document.getElementById('vibe').value = data.vibe;
+
+            setColorPair('primary', data.primaryColor || DEFAULT_PRIMARY) || setColorPair('primary', DEFAULT_PRIMARY);
+            setColorPair('accent', data.accentColor || DEFAULT_ACCENT) || setColorPair('accent', DEFAULT_ACCENT);
+
+            pages = Array.isArray(data.pages)
+                ? data.pages.map((p) => String(p).trim()).filter(Boolean)
+                : [];
+
+            // dedupe case-insensitively while preserving order
+            const seen = new Set();
+            pages = pages.filter((p) => {
+                const key = p.toLowerCase();
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+
+            renderPageChips();
+        }
+
+        function updateLivePreview(data) {
+            const shell = document.getElementById('live-preview');
+            shell.style.setProperty('--preview-primary', data.primaryColor);
+            shell.style.setProperty('--preview-accent', data.accentColor);
+
+            document.getElementById('preview-brand').textContent = data.projectName || 'Your Brand';
+            document.getElementById('preview-headline').textContent =
+                data.headline || data.valueProp || 'Your homepage headline will appear here.';
+            document.getElementById('preview-cta').textContent = data.cta || 'Primary CTA';
+
+            const pagesEl = document.getElementById('preview-pages');
+            pagesEl.replaceChildren();
+            (data.pages.length ? data.pages : ['Home', 'About', 'Contact']).forEach((page) => {
+                const chip = document.createElement('span');
+                chip.className = 'px-2.5 py-1 rounded-full bg-white/10 border border-white/15';
+                chip.textContent = page;
+                pagesEl.appendChild(chip);
+            });
+        }
+
+        function generateSummary() {
+            const summaryEl = document.getElementById('summary-preview');
+            const data = collectFormData({ commitColors: false });
+            updateLivePreview(data);
+
+            const row = (label, value) =>
+                `<div><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value || 'Not specified')}</div>`;
+
+            summaryEl.innerHTML = `<div class="space-y-3 text-sm">
+                ${row('Project', data.projectName)}
+                ${row('Industry', data.industry)}
+                ${row('Goals', data.goals)}
+                <div class="pt-2 border-t border-slate-200"></div>
+                ${row('Audience', data.audience)}
+                ${row('Pain Points', data.painPoints)}
+                ${row('Desired Outcomes', data.desiredOutcomes)}
+                <div class="pt-2 border-t border-slate-200"></div>
+                ${row('Value Proposition', data.valueProp)}
+                ${row('Headline', data.headline)}
+                ${row('CTA', data.cta)}
+                ${row('Key Message', data.keyMessage)}
+                ${row('Tone', data.tone)}
+                <div class="pt-2 border-t border-slate-200"></div>
+                ${row('Key Pages', data.pages.length ? data.pages.join(', ') : '')}
+                ${row('Features', data.features)}
+                ${row('Technical Requirements', data.techRequirements)}
+                <div class="pt-2 border-t border-slate-200"></div>
+                ${row('Design Vibe', `${data.vibe} (${data.primaryColor} / ${data.accentColor})`)}
+            </div>`;
+        }
+
         function exportJSON() {
-            const data = collectFormData();
+            const data = collectFormData({ commitColors: true });
             const jsonStr = JSON.stringify(data, null, 2);
-            
             const blob = new Blob([jsonStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${(data.projectName || 'website-plan').toLowerCase().replace(/\s+/g, '-')}-designflow.json`;
+            a.download = `${sanitizeFilename(data.projectName)}-designflow.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            document.getElementById('export-status').textContent = `Downloaded ${a.download}`;
         }
 
-        function copyBrief() {
-            const data = collectFormData();
-            
+        function buildBrief(data) {
             let brief = `# ${data.projectName || 'Website'} Design Brief\n\n`;
             brief += `**Generated:** ${new Date().toLocaleDateString()}\n\n`;
-            brief += `## Project Overview\n${data.goals || 'No goals provided.'}\n\n`;
-            brief += `## Target Audience\n${data.audience || 'Not specified'}\n\n`;
-            brief += `## Value Proposition\n${data.valueProp || 'Not specified'}\n\n`;
-            brief += `## Key Pages\n${data.pages.length ? data.pages.map(p => `- ${p}`).join('\n') : '- None specified'}\n\n`;
+            brief += `## Project Overview\n`;
+            brief += `- **Industry:** ${data.industry || 'Not specified'}\n`;
+            brief += `- **Goals:** ${data.goals || 'No goals provided.'}\n\n`;
+            brief += `## Target Audience\n`;
+            brief += `${data.audience || 'Not specified'}\n\n`;
+            brief += `- **Pain points:** ${data.painPoints || 'Not specified'}\n`;
+            brief += `- **Desired outcomes:** ${data.desiredOutcomes || 'Not specified'}\n\n`;
+            brief += `## Messaging\n`;
+            brief += `- **Value proposition:** ${data.valueProp || 'Not specified'}\n`;
+            brief += `- **Headline:** ${data.headline || 'Not specified'}\n`;
+            brief += `- **CTA:** ${data.cta || 'Not specified'}\n`;
+            brief += `- **Key message:** ${data.keyMessage || 'Not specified'}\n`;
+            brief += `- **Tone:** ${data.tone}\n\n`;
+            brief += `## Key Pages (sitemap order)\n`;
+            brief += `${data.pages.length ? data.pages.map((p) => `- ${p}`).join('\n') : '- None specified'}\n\n`;
             brief += `## Features & Functionality\n${data.features || 'Not specified'}\n\n`;
+            brief += `## Technical Requirements\n${data.techRequirements || 'Not specified'}\n\n`;
             brief += `## Design Direction\n- Vibe: ${data.vibe}\n- Primary: ${data.primaryColor}\n- Accent: ${data.accentColor}\n\n`;
             brief += `---\n*Exported from DesignFlow by RavenClaude*`;
-            
-            navigator.clipboard.writeText(brief).then(() => {
-                const originalText = event.currentTarget ? event.currentTarget.innerHTML : '';
-                alert('Design brief copied to clipboard!');
-            }).catch(() => {
-                // Fallback
+            return brief;
+        }
+
+        async function copyBrief(button) {
+            const data = collectFormData({ commitColors: true });
+            const brief = buildBrief(data);
+            const status = document.getElementById('export-status');
+
+            try {
+                await navigator.clipboard.writeText(brief);
+                status.textContent = 'Design brief copied to clipboard.';
+                if (button) {
+                    const original = button.innerHTML;
+                    button.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i><span>Copied</span>';
+                    setTimeout(() => { button.innerHTML = original; }, 1600);
+                }
+            } catch (_) {
                 const textarea = document.createElement('textarea');
                 textarea.value = brief;
+                textarea.setAttribute('readonly', '');
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
                 document.body.appendChild(textarea);
                 textarea.select();
-                document.execCommand('copy');
+                const ok = document.execCommand('copy');
                 document.body.removeChild(textarea);
-                alert('Design brief copied to clipboard!');
-            });
+                status.textContent = ok
+                    ? 'Design brief copied to clipboard.'
+                    : 'Could not copy automatically — select and copy the brief manually after export.';
+            }
         }
 
         function loadExampleData() {
-            // Pre-fill with realistic Raven Power example
-            document.getElementById('project-name').value = 'Raven Power LLC';
-            document.getElementById('industry').value = 'AI Consulting & Power Platform Solutions';
-            document.getElementById('project-goals').value = 'Attract ideal clients, showcase deep expertise in Microsoft Power Platform and agentic AI, and make it easy to start conversations.';
-            document.getElementById('audience').value = 'Business leaders, operations managers, and IT decision-makers in mid-market companies who are overwhelmed by manual processes and ready to modernize.';
-            document.getElementById('pain-points').value = 'Unclear automation opportunities, scattered data, slow internal processes';
-            document.getElementById('desired-outcomes').value = 'Clear understanding of capabilities, trust in delivery, easy way to engage';
-            document.getElementById('value-prop').value = 'We help ambitious teams unlock the full power of Microsoft 365 and AI with practical, production-grade solutions.';
-            document.getElementById('tone').value = 'Professional & Approachable';
-            
-            pages = ['Home', 'Services', 'Solutions', 'Insights', 'About', 'Contact'];
-            renderPageChips();
-            
-            document.getElementById('features').value = 'Lead capture forms, case study showcase, interactive service explainer, booking calendar, newsletter signup, client portal teaser';
-            
-            document.getElementById('primary-color').value = '#0f172a';
-            document.getElementById('primary-color-hex').value = '#0f172a';
-            document.getElementById('accent-color').value = '#475569';
-            document.getElementById('accent-color-hex').value = '#475569';
-            document.getElementById('vibe').value = 'Modern Minimal';
-            
-            // Go to review step to show results
+            applyFormData({
+                projectName: 'Raven Power LLC',
+                industry: 'AI Consulting & Power Platform Solutions',
+                goals: 'Attract ideal clients, showcase deep expertise in Microsoft Power Platform and agentic AI, and make it easy to start conversations.',
+                audience: 'Business leaders, operations managers, and IT decision-makers in mid-market companies who are overwhelmed by manual processes and ready to modernize.',
+                painPoints: 'Unclear automation opportunities, scattered data, slow internal processes',
+                desiredOutcomes: 'Clear understanding of capabilities, trust in delivery, easy way to engage',
+                valueProp: 'We help ambitious teams unlock the full power of Microsoft 365 and AI with practical, production-grade solutions.',
+                headline: 'Practical AI systems that ship.',
+                cta: 'Book a discovery call',
+                keyMessage: 'Strategy, agents, and Power Platform delivery — without the vaporware.',
+                tone: 'Professional & Approachable',
+                pages: ['Home', 'Services', 'Solutions', 'Insights', 'About', 'Contact'],
+                features: 'Lead capture forms, case study showcase, interactive service explainer, booking calendar, newsletter signup, client portal teaser',
+                techRequirements: 'Static hosting (GitHub Pages or Vercel), accessible WCAG 2.2 AA, Calendly embed, HubSpot or form endpoint, analytics via Plausible',
+                primaryColor: DEFAULT_PRIMARY,
+                accentColor: '#475569',
+                vibe: 'Modern Minimal'
+            });
             showStep(6);
+            scheduleSave();
         }
 
         function resetForm() {
             if (!confirm('Reset all fields?')) return;
-            
-            document.querySelectorAll('input, textarea, select').forEach(el => {
-                if (el.type === 'color') {
-                    el.value = el.id.includes('primary') ? '#0f172a' : '#334155';
-                } else if (el.tagName === 'SELECT') {
+
+            fieldIds.forEach((id) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (el.type === 'color') return;
+                if (el.tagName === 'SELECT') {
                     el.selectedIndex = 0;
-                } else {
-                    el.value = '';
+                    return;
                 }
+                el.value = '';
+                el.classList.remove('invalid');
             });
-            
+
+            setColorPair('primary', DEFAULT_PRIMARY);
+            setColorPair('accent', DEFAULT_ACCENT);
             pages = [];
             renderPageChips();
-            document.getElementById('pages-container').innerHTML = '';
-            
-            // Reset to first step
+            localStorage.removeItem(STORAGE_KEY);
+            document.getElementById('export-status').textContent = '';
             showStep(1);
         }
 
+        function scheduleSave() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(saveDraft, 250);
+        }
+
+        function saveDraft() {
+            try {
+                const data = collectFormData();
+                data.currentStep = currentStep;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (_) {
+                // Quota or private mode — ignore
+            }
+        }
+
+        function restoreDraft() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return false;
+                const data = JSON.parse(raw);
+                if (!isDesignFlowPlan(data)) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    return false;
+                }
+                applyFormData(data);
+                if (data.currentStep) currentStep = Math.min(Math.max(Number(data.currentStep) || 1, 1), totalSteps);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function isDesignFlowPlan(data) {
+            if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+            const keys = [
+                'projectName', 'industry', 'goals', 'audience', 'painPoints', 'desiredOutcomes',
+                'valueProp', 'headline', 'cta', 'keyMessage', 'tone', 'pages', 'features',
+                'techRequirements', 'primaryColor', 'accentColor', 'vibe'
+            ];
+            const hit = keys.filter((k) => Object.prototype.hasOwnProperty.call(data, k)).length;
+            return hit >= 4;
+        }
+
+        function importJSON() {
+            document.getElementById('json-import').click();
+        }
+
+        function handleJSONImport(event) {
+            const file = event.target.files && event.target.files[0];
+            event.target.value = '';
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const data = JSON.parse(String(reader.result));
+                    if (!isDesignFlowPlan(data)) {
+                        alert('That JSON does not look like a DesignFlow plan. Export from this wizard first, then import that file.');
+                        return;
+                    }
+                    applyFormData(data);
+                    showStep(6);
+                    scheduleSave();
+                    document.getElementById('export-status').textContent = `Imported ${file.name}`;
+                } catch (_) {
+                    alert('Could not import that file. Please choose a DesignFlow JSON export.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
         function setupColorSync() {
-            // Sync color pickers with hex inputs
             const primaryColor = document.getElementById('primary-color');
             const primaryHex = document.getElementById('primary-color-hex');
             const accentColor = document.getElementById('accent-color');
             const accentHex = document.getElementById('accent-color-hex');
 
-            primaryColor.addEventListener('input', () => primaryHex.value = primaryColor.value);
-            primaryHex.addEventListener('input', () => primaryColor.value = primaryHex.value);
-            
-            accentColor.addEventListener('input', () => accentHex.value = accentColor.value);
-            accentHex.addEventListener('input', () => accentColor.value = accentHex.value);
+            function onHexInput(kind, textEl, pickerEl) {
+                const raw = textEl.value.trim();
+                const asTyped = normalizeHex(raw, false);
+                // During typing, only sync the picker for a complete 6-digit value.
+                // 3-digit shorthand is expanded on blur so `#0f1` does not become `#00ff11` mid-entry.
+                if (asTyped && asTyped.length === 7) {
+                    pickerEl.value = asTyped;
+                    textEl.value = asTyped;
+                    textEl.classList.remove('invalid');
+                    scheduleSave();
+                    return;
+                }
+                const incomplete = /^#?[0-9a-fA-F]{0,6}$/.test(raw);
+                if (incomplete) textEl.classList.remove('invalid');
+                else textEl.classList.add('invalid');
+            }
+
+            primaryColor.addEventListener('input', () => {
+                primaryHex.value = primaryColor.value;
+                primaryHex.classList.remove('invalid');
+                scheduleSave();
+            });
+            primaryHex.addEventListener('input', () => onHexInput('primary', primaryHex, primaryColor));
+            primaryHex.addEventListener('blur', () => {
+                setColorPair('primary', primaryHex.value || DEFAULT_PRIMARY, true);
+                scheduleSave();
+            });
+
+            accentColor.addEventListener('input', () => {
+                accentHex.value = accentColor.value;
+                accentHex.classList.remove('invalid');
+                scheduleSave();
+            });
+            accentHex.addEventListener('input', () => onHexInput('accent', accentHex, accentColor));
+            accentHex.addEventListener('blur', () => {
+                setColorPair('accent', accentHex.value || DEFAULT_ACCENT, true);
+                scheduleSave();
+            });
         }
 
-        function init() {
-            initTailwind();
-            setupColorSync();
-            
-            // Initial page chips (empty)
-            renderPageChips();
-            
-            // Start on step 1
-            showStep(1);
-            
-            // Keyboard support
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'ArrowRight' && currentStep < totalSteps) {
-                    nextStep();
-                }
-                if (e.key === 'ArrowLeft' && currentStep > 1) {
-                    prevStep();
+        function setupAutosaveListeners() {
+            const skipIds = new Set(['primary-color', 'primary-color-hex', 'accent-color', 'accent-color-hex']);
+            fieldIds.forEach((id) => {
+                if (skipIds.has(id)) return;
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.addEventListener('input', scheduleSave);
+                el.addEventListener('change', scheduleSave);
+            });
+
+            document.getElementById('new-page').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addPageChip();
                 }
             });
 
-            // Make color hex inputs update nicely
-            console.log('%c[DesignFlow] RavenClaude WebsiteStarter initialized', 'color:#64748b');
+            document.getElementById('json-import').addEventListener('change', handleJSONImport);
         }
 
-        // Boot the app
+        function init() {
+            setupColorSync();
+            setupAutosaveListeners();
+            renderPageChips();
+
+            document.getElementById('btn-load-example').addEventListener('click', (e) => {
+                e.preventDefault();
+                loadExampleData();
+            });
+            document.getElementById('btn-import').addEventListener('click', (e) => {
+                e.preventDefault();
+                importJSON();
+            });
+            document.getElementById('btn-reset').addEventListener('click', (e) => {
+                e.preventDefault();
+                resetForm();
+            });
+
+            const restored = restoreDraft();
+            showStep(restored ? currentStep : 1, { focus: false });
+
+            document.addEventListener('keydown', (e) => {
+                if (isEditableTarget(e.target) || isEditableTarget(document.activeElement)) return;
+                if (e.key === 'ArrowRight' && currentStep < totalSteps) {
+                    e.preventDefault();
+                    nextStep();
+                }
+                if (e.key === 'ArrowLeft' && currentStep > 1) {
+                    e.preventDefault();
+                    prevStep();
+                }
+            });
+        }
+
+        // Expose for manual/console testing
+        window.loadExampleData = loadExampleData;
+        window.importJSON = importJSON;
+        window.resetForm = resetForm;
+
         window.onload = init;
     </script>
 </body>
