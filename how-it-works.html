@@ -3,75 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How DesignFlow Works | RavenClaude</title>
+    <title>How DesignFlow Works | RavenPower</title>
+    <meta name="description" content="How RavenPower DesignFlow turns vague website ideas into clear briefs and export-ready JSON.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rp: {
+                            bg: '#07080a',
+                            surface: '#0c0e12',
+                            panel: '#10131a',
+                            text: '#f5f7fa',
+                            muted: '#9aa3b2',
+                            faint: '#8a909c',
+                            accent: '#56d08a',
+                            accent2: '#6ee0a1'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', system-ui, sans-serif; }
-        .font-display { font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif; }
+        :root {
+            --rp-bg: #07080a;
+            --rp-accent: #56d08a;
+            --rp-line: rgba(255,255,255,0.07);
+            --rp-line-strong: rgba(255,255,255,0.14);
+            --rp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        body {
+            font-family: Inter, system-ui, sans-serif;
+            color: #f5f7fa;
+            background:
+                radial-gradient(800px 420px at 12% -10%, rgba(86,208,138,0.14), transparent 55%),
+                linear-gradient(180deg, #0a0c10 0%, #07080a 50%, #050607 100%);
+            min-height: 100vh;
+        }
+        .font-display { font-family: "Space Grotesk", Inter, system-ui, sans-serif; }
+        .brand-mark {
+            width: 2.75rem; height: 2.75rem; border-radius: 0.95rem;
+            border: 1px solid var(--rp-line-strong);
+            background: linear-gradient(160deg, #151922, #0a0c10);
+            display: grid; place-items: center; overflow: hidden;
+        }
+        .brand-mark img {
+            width: 1.7rem; height: 1.7rem; object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+        .panel {
+            background: linear-gradient(180deg, rgba(16,19,26,0.96), rgba(12,14,18,0.98));
+            border: 1px solid var(--rp-line-strong);
+            border-radius: 1.5rem;
+            box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+        }
+        .rule {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(86,208,138,0.55), transparent);
+            margin: 2rem 0;
+        }
+        .btn-primary {
+            background: linear-gradient(180deg, #6ee0a1, #56d08a);
+            color: #04140b;
+            border: 1px solid rgba(86,208,138,0.55);
+            box-shadow: 0 8px 24px rgba(86,208,138,0.18);
+        }
+        .btn-primary:hover { filter: brightness(1.05); }
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation: none !important; transition: none !important; }
         }
     </style>
 </head>
-<body class="bg-slate-50">
+<body>
     <div class="max-w-4xl mx-auto px-6 py-12">
         <div class="flex items-center gap-x-3 mb-8">
-            <div class="w-11 h-11 bg-slate-900 rounded-2xl flex items-center justify-center overflow-hidden">
-                <img src="raven-logo.png" alt="RavenClaude" class="w-8 h-8 object-contain" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                <span class="text-white text-3xl hidden" aria-hidden="true">🐦‍⬛</span>
+            <div class="brand-mark">
+                <img src="raven-logo.png" alt="RavenPower" onerror="this.onerror=null;this.src='raven-logo.svg';this.onerror=function(){this.classList.add('hidden');this.nextElementSibling.classList.remove('hidden');};">
+                <span class="text-white text-2xl hidden" aria-hidden="true">🐦‍⬛</span>
             </div>
             <div>
-                <span class="font-display text-3xl font-semibold tracking-tight">DesignFlow</span>
-                <span class="text-slate-500 ml-2">by RavenClaude</span>
+                <div class="flex items-baseline gap-x-2 flex-wrap">
+                    <span class="font-display text-3xl font-semibold tracking-tight">DesignFlow</span>
+                    <span class="text-rp-muted">by RavenPower</span>
+                </div>
+                <div class="text-[11px] uppercase tracking-[0.18em] text-rp-faint mt-0.5">Website planning studio</div>
             </div>
         </div>
 
-        <h1 class="font-display text-4xl tracking-tighter font-semibold mb-2">How DesignFlow Works</h1>
-        <p class="text-xl text-slate-600 mb-10">A practical, local-first planning tool that produces clear outputs for humans and AI builders.</p>
+        <h1 class="font-display text-4xl tracking-tight font-semibold mb-2">How DesignFlow Works</h1>
+        <p class="text-xl text-rp-muted mb-8">A practical, local-first planning tool that produces clear outputs for humans and AI builders — styled in the RavenPower visual system.</p>
+        <div class="rule"></div>
 
-        <div class="max-w-none text-slate-700 space-y-4">
-            <h2 class="font-semibold text-slate-900 text-lg">The Problem It Solves</h2>
-            <p>Most website projects start with vague requirements. This leads to scope creep, mismatched expectations, and expensive revisions. DesignFlow forces structured thinking upfront.</p>
+        <div class="space-y-4 text-rp-muted">
+            <h2 class="font-semibold text-rp-text text-lg">The Problem It Solves</h2>
+            <p>Most website projects start with vague requirements. That leads to scope creep, mismatched expectations, and expensive revisions. DesignFlow forces structured thinking upfront.</p>
 
-            <h2 class="font-semibold text-slate-900 text-lg mt-8">The 6-Step Flow</h2>
-
-            <ol class="space-y-6 mt-4 list-decimal list-inside">
-                <li><strong>Project Overview</strong> — Business name, industry/niche, and website goals.</li>
-                <li><strong>Target Audience</strong> — Who you're building for, pain points, and desired outcomes.</li>
-                <li><strong>Messaging &amp; Content Strategy</strong> — Value proposition, homepage headline, CTA, key message, and tone.</li>
-                <li><strong>Key Features &amp; Site Structure</strong> — Ordered page list (sitemap order), must-have features, and technical requirements (hosting, integrations, accessibility).</li>
-                <li><strong>Design Direction &amp; Branding</strong> — Primary/accent colors and overall visual vibe.</li>
-                <li><strong>Review &amp; Export</strong> — Live color preview, summary, JSON download, and Markdown design brief. Drafts autosave in your browser; you can import a previous JSON export to continue editing.</li>
+            <h2 class="font-semibold text-rp-text text-lg mt-8">The 6-Step Flow</h2>
+            <ol class="space-y-5 mt-4 list-decimal list-inside">
+                <li><strong class="text-rp-text">Project Overview</strong> — Business name, industry/niche, and website goals.</li>
+                <li><strong class="text-rp-text">Target Audience</strong> — Who you're building for, pain points, and desired outcomes.</li>
+                <li><strong class="text-rp-text">Messaging &amp; Content Strategy</strong> — Value proposition, homepage headline, CTA, key message, and tone.</li>
+                <li><strong class="text-rp-text">Key Features &amp; Site Structure</strong> — Ordered page list (sitemap order), must-have features, and technical requirements.</li>
+                <li><strong class="text-rp-text">Design Direction &amp; Branding</strong> — Primary/accent colors and overall visual vibe (defaults to RavenPower Dark).</li>
+                <li><strong class="text-rp-text">Review &amp; Export</strong> — Live color preview, summary, JSON download, and Markdown design brief. Drafts autosave in your browser; import a previous JSON export to continue editing.</li>
             </ol>
 
-            <h2 class="font-semibold text-slate-900 text-lg mt-10">Perfect Companion for RavenClaude</h2>
-            <p>The structured JSON output from DesignFlow is ideal input for RavenClaude agents, especially:</p>
-            <ul class="list-disc list-inside space-y-1">
-                <li><strong>Web Strategist</strong></li>
-                <li><strong>UI/UX Designer</strong></li>
-                <li><strong>Information Architect</strong></li>
-                <li><strong>Frontend Engineer</strong></li>
-                <li><strong>Integration Specialist</strong></li>
-            </ul>
-            <p class="mt-2">You can hand the exported JSON directly to the team (or to RavenClaude) and get a production-ready website with far less back-and-forth.</p>
+            <h2 class="font-semibold text-rp-text text-lg mt-10">RavenPower Brand Language</h2>
+            <p>DesignFlow ships with RavenPower's commerce visual system: cool near-black canvas, Space Grotesk display type, Inter body, and a restrained green accent (<code class="text-rp-accent">#56d08a</code>). Accent is used for focus, progress, and primary actions — not as a painted fill.</p>
 
-            <div class="mt-10 p-6 bg-white border border-slate-200 rounded-3xl">
-                <h3 class="font-semibold mb-2 flex items-center gap-x-2">
-                    <i class="fa-solid fa-lightbulb text-amber-500" aria-hidden="true"></i>
+            <h2 class="font-semibold text-rp-text text-lg mt-10">Perfect Companion for RavenPower builds</h2>
+            <p>The structured JSON output is ideal input for RavenPower / RavenClaude agents, especially:</p>
+            <ul class="list-disc list-inside space-y-1">
+                <li><strong class="text-rp-text">Web Strategist</strong></li>
+                <li><strong class="text-rp-text">UI/UX Designer</strong></li>
+                <li><strong class="text-rp-text">Information Architect</strong></li>
+                <li><strong class="text-rp-text">Frontend Engineer</strong></li>
+                <li><strong class="text-rp-text">Integration Specialist</strong></li>
+            </ul>
+            <p class="mt-2">Hand the exported JSON to the team (or to RavenClaude) and get a production-ready website with far less back-and-forth.</p>
+
+            <div class="mt-10 p-6 panel">
+                <h3 class="font-semibold mb-2 flex items-center gap-x-2 text-rp-text">
+                    <i class="fa-solid fa-bolt text-rp-accent" aria-hidden="true"></i>
                     <span>Pro Tip</span>
                 </h3>
-                <p class="text-sm">After exporting the JSON, drop it into a new RavenClaude session along with any reference sites. The agents will use it as structured context to generate wireframes, copy, component specs, or even full implementation plans.</p>
+                <p class="text-sm text-rp-muted">After exporting the JSON, drop it into a new RavenClaude session along with any reference sites. The agents will use it as structured context to generate wireframes, copy, component specs, or implementation plans.</p>
             </div>
 
-            <p class="text-sm text-slate-500 mt-8">Privacy note: your answers stay in the browser (localStorage draft + local export). Styling libraries may still load from CDNs when you open the HTML files.</p>
+            <p class="text-sm text-rp-faint mt-8">Privacy note: your answers stay in the browser (localStorage draft + local export). Styling libraries may still load from CDNs when you open the HTML files.</p>
         </div>
 
         <div class="mt-12 text-center">
-            <a href="index.html" class="inline-flex items-center gap-x-2 px-6 py-3 bg-slate-900 text-white rounded-2xl text-sm font-semibold hover:bg-black transition-colors">
+            <a href="index.html" class="btn-primary inline-flex items-center gap-x-2 px-6 py-3 rounded-2xl text-sm font-semibold transition">
                 <span>Open the Wizard</span> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
         </div>
