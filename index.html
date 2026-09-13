@@ -3,71 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DesignFlow | RavenClaude Website Planner</title>
+    <title>DesignFlow | RavenPower Website Planner</title>
+    <meta name="description" content="RavenPower DesignFlow — structured website planning with local drafts and export-ready JSON.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rp: {
+                            bg: '#07080a',
+                            surface: '#0c0e12',
+                            panel: '#10131a',
+                            text: '#f5f7fa',
+                            muted: '#9aa3b2',
+                            faint: '#8a909c',
+                            accent: '#56d08a',
+                            accent2: '#6ee0a1',
+                            ink: '#04140b'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
     <style>
         :root {
-            --raven: #0f172a;
+            --raven: #07080a;
+            --rp-bg: #07080a;
+            --rp-surface: #0c0e12;
+            --rp-panel: #10131a;
+            --rp-line: rgba(255,255,255,0.07);
+            --rp-line-strong: rgba(255,255,255,0.14);
+            --rp-text: #f5f7fa;
+            --rp-muted: #9aa3b2;
+            --rp-accent: #56d08a;
+            --rp-accent-2: #6ee0a1;
+            --rp-accent-soft: rgba(86,208,138,0.16);
+            --rp-accent-glow: rgba(86,208,138,0.35);
+            --rp-ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         body {
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: Inter, system-ui, sans-serif;
+            color: var(--rp-text);
+            background:
+                radial-gradient(900px 480px at 10% -8%, rgba(86,208,138,0.14), transparent 55%),
+                radial-gradient(700px 420px at 90% 0%, rgba(58,163,145,0.08), transparent 50%),
+                linear-gradient(180deg, #0a0c10 0%, var(--rp-bg) 45%, #050607 100%);
+            min-height: 100vh;
         }
 
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 64px 64px;
+            mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
+            opacity: 0.45;
+            z-index: 0;
+        }
+
+        body > * { position: relative; z-index: 1; }
+
         .font-display {
-            font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+            font-family: "Space Grotesk", Inter, system-ui, sans-serif;
             font-weight: 600;
         }
 
-        .step {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .step { transition: all 0.3s var(--rp-ease); }
 
-        .wizard-container {
-            max-width: 980px;
-            margin: 0 auto;
-        }
+        .wizard-container { max-width: 980px; margin: 0 auto; }
 
         .nav-active {
-            background-color: #0f172a;
-            color: white;
+            background: rgba(86,208,138,0.14) !important;
+            color: var(--rp-accent) !important;
+            border: 1px solid rgba(86,208,138,0.4) !important;
             border-radius: 9999px;
         }
 
         .section-header {
             font-size: 1.35rem;
             font-weight: 600;
-            color: #0f172a;
+            color: var(--rp-text);
+            font-family: "Space Grotesk", Inter, system-ui, sans-serif;
+            letter-spacing: -0.02em;
         }
 
         .form-input {
-            transition: all 0.2s ease;
+            transition: all 0.2s var(--rp-ease);
+            background: rgba(255,255,255,0.03);
+            color: var(--rp-text);
         }
+
+        .form-input::placeholder { color: #6b7280; }
 
         .form-input:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
-            border-color: #334155;
+            box-shadow: 0 0 0 3px var(--rp-accent-soft);
+            border-color: rgba(86,208,138,0.55);
+            background: rgba(86,208,138,0.04);
         }
 
         .form-input.invalid {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+            border-color: #f87171;
+            box-shadow: 0 0 0 3px rgba(248,113,113,0.15);
         }
 
+        select.form-input option { background: #10131a; color: #f5f7fa; }
+
         .raven-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(180deg, rgba(12,14,18,0.94), rgba(7,8,10,0.82));
+            border-bottom: 1px solid var(--rp-line);
+            backdrop-filter: blur(14px);
+        }
+
+        .brand-mark {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.9rem;
+            border: 1px solid var(--rp-line-strong);
+            background: linear-gradient(160deg, #151922, #0a0c10);
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        .brand-mark img {
+            width: 1.55rem;
+            height: 1.55rem;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .wizard-panel {
+            background: linear-gradient(180deg, rgba(16,19,26,0.96), rgba(12,14,18,0.98));
+            border: 1px solid var(--rp-line-strong);
+            box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+        }
+
+        .step-badge {
+            background: rgba(86,208,138,0.12);
+            border: 1px solid rgba(86,208,138,0.35);
+            color: var(--rp-accent);
+        }
+
+        .btn-ghost {
+            border: 1px solid var(--rp-line-strong);
+            background: rgba(255,255,255,0.03);
+            color: var(--rp-text);
+            transition: background 0.2s var(--rp-ease), border-color 0.2s var(--rp-ease);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.07); }
+
+        .btn-primary {
+            background: linear-gradient(180deg, var(--rp-accent-2), var(--rp-accent));
+            color: #04140b;
+            border: 1px solid rgba(86,208,138,0.55);
+            box-shadow: 0 0 0 1px rgba(86,208,138,0.12), 0 8px 24px rgba(86,208,138,0.18);
+            transition: filter 0.2s var(--rp-ease), box-shadow 0.2s var(--rp-ease);
+        }
+        .btn-primary:hover {
+            filter: brightness(1.05);
+            box-shadow: 0 0 0 1px rgba(86,208,138,0.25), 0 10px 30px rgba(86,208,138,0.28);
         }
 
         .preview-shell {
             background:
                 radial-gradient(circle at top left, color-mix(in srgb, var(--preview-accent) 28%, transparent), transparent 45%),
-                linear-gradient(160deg, color-mix(in srgb, var(--preview-primary) 92%, white), var(--preview-primary));
+                linear-gradient(160deg, color-mix(in srgb, var(--preview-primary) 88%, white), var(--preview-primary));
         }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 9999px;
+            background: var(--rp-accent);
+            box-shadow: 0 0 0 4px var(--rp-accent-soft);
+        }
+
+        .page-chip {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--rp-line-strong);
+            color: var(--rp-text);
+        }
+
+        @keyframes rise-in {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .rise-in { animation: rise-in 0.55s var(--rp-ease) both; }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -76,45 +215,49 @@
             }
         }
     </style>
+
 </head>
-<body class="bg-slate-50">
+<body>
     <header class="raven-header text-white">
         <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-4">
             <div class="flex items-center gap-x-3 min-w-0">
-                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0">
-                    <img src="raven-logo.png" alt="RavenClaude" class="w-8 h-8 object-contain" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                    <span class="text-3xl hidden" aria-hidden="true">🐦‍⬛</span>
+                <div class="brand-mark flex-shrink-0">
+                    <img src="raven-logo.png" alt="RavenPower" onerror="this.onerror=null;this.src='raven-logo.svg';this.onerror=function(){this.classList.add('hidden');this.nextElementSibling.classList.remove('hidden');};">
+                    <span class="text-xl hidden" aria-hidden="true">🐦‍⬛</span>
                 </div>
                 <div class="min-w-0">
-                    <span class="font-display text-2xl font-semibold tracking-tight">DesignFlow</span>
-                    <span class="text-slate-400 text-sm ml-1.5">by RavenClaude</span>
+                    <div class="flex items-baseline gap-x-2 flex-wrap">
+                        <span class="font-display text-2xl font-semibold tracking-tight text-rp-text">DesignFlow</span>
+                        <span class="text-rp-muted text-sm">by RavenPower</span>
+                    </div>
+                    <div class="text-[11px] uppercase tracking-[0.18em] text-rp-faint mt-0.5">Website planning studio</div>
                 </div>
             </div>
 
             <div class="flex items-center gap-x-2 sm:gap-x-4 flex-shrink-0">
                 <a href="how-it-works.html" id="link-how-it-works"
-                   class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl hidden sm:inline-flex items-center gap-x-2">
+                   class="btn-ghost px-3 py-2 text-sm font-medium rounded-2xl hidden sm:inline-flex items-center gap-x-2">
                     <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
                     <span>How it works</span>
                 </a>
 
                 <button type="button" id="btn-load-example"
-                        class="px-3 sm:px-4 py-2 text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors rounded-2xl inline-flex items-center gap-x-2"
-                        aria-label="Load Raven Power example data">
+                        class="btn-ghost px-3 sm:px-4 py-2 text-sm font-medium rounded-2xl inline-flex items-center gap-x-2"
+                        aria-label="Load RavenPower example data">
                     <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-                    <span class="hidden md:inline">Load Raven Power Example</span>
+                    <span class="hidden md:inline">Load RavenPower Example</span>
                     <span class="md:hidden">Example</span>
                 </button>
 
                 <button type="button" id="btn-import"
-                        class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl inline-flex items-center gap-x-2"
+                        class="btn-ghost px-3 py-2 text-sm font-medium rounded-2xl inline-flex items-center gap-x-2"
                         aria-label="Import JSON plan">
                     <i class="fa-solid fa-file-import" aria-hidden="true"></i>
                     <span class="hidden sm:inline">Import</span>
                 </button>
 
                 <button type="button" id="btn-reset"
-                        class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl inline-flex items-center gap-x-2"
+                        class="btn-ghost px-3 py-2 text-sm font-medium rounded-2xl inline-flex items-center gap-x-2"
                         aria-label="Reset form">
                     <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
                     <span class="hidden sm:inline">Reset</span>
@@ -127,87 +270,87 @@
 
     <div class="max-w-7xl mx-auto px-6 pt-8 pb-12">
         <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-x-2 bg-white shadow-sm border border-slate-200 rounded-3xl px-4 py-1.5 mb-4">
-                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" aria-hidden="true"></div>
-                <span class="text-sm font-medium text-slate-600">Interactive • Local drafts • Export-ready</span>
+            <div class="inline-flex items-center gap-x-2 border border-white/10 bg-white/[0.03] rounded-3xl px-4 py-1.5 mb-4 rise-in">
+                <div class="status-dot" aria-hidden="true"></div>
+                <span class="text-sm font-medium text-rp-muted">Interactive • Local drafts • Export-ready</span>
             </div>
 
-            <h1 class="font-display text-4xl sm:text-5xl tracking-tighter font-semibold text-slate-900">Plan your website.<br>Build with clarity.</h1>
-            <p class="mt-3 text-lg sm:text-xl text-slate-600 max-w-xl mx-auto">A structured planning wizard that turns vague ideas into clear briefs and JSON for designers or AI builders.</p>
+            <h1 class="font-display text-4xl sm:text-5xl tracking-tight font-semibold text-rp-text rise-in">Plan your website.<br><span class="text-rp-accent">Build with RavenPower clarity.</span></h1>
+            <p class="mt-3 text-lg sm:text-xl text-rp-muted max-w-xl mx-auto">A structured planning wizard that turns vague ideas into clear briefs and JSON for designers or AI builders.</p>
         </div>
 
         <div class="mb-8 max-w-[980px] mx-auto">
             <div class="flex items-center justify-between mb-3 px-1">
-                <div class="text-sm font-semibold text-slate-700">Step <span id="current-step">1</span> of 6</div>
-                <div class="text-sm text-slate-500" id="progress-text">Project Overview</div>
+                <div class="text-sm font-semibold text-rp-text">Step <span id="current-step">1</span> of 6</div>
+                <div class="text-sm text-rp-muted" id="progress-text">Project Overview</div>
             </div>
-            <div class="h-2 bg-slate-200 rounded-full overflow-hidden"
+            <div class="h-2 rounded-full overflow-hidden border border-white/10 bg-white/[0.06]"
                  role="progressbar"
                  aria-valuemin="1"
                  aria-valuemax="6"
                  aria-valuenow="1"
                  aria-labelledby="progress-text"
                  id="progress-track">
-                <div id="progress-bar" class="h-2 bg-slate-900 transition-all duration-500 rounded-full" style="width: 16.66%"></div>
+                <div id="progress-bar" class="h-2 transition-all duration-500 rounded-full" style="width:16.66%;background:linear-gradient(90deg,#56d08a,#6ee0a1);box-shadow:0 0 18px rgba(86,208,138,0.35)"></div>
             </div>
         </div>
 
         <nav class="flex flex-wrap gap-2 mb-8 max-w-[980px] mx-auto" id="step-nav" aria-label="Wizard steps"></nav>
 
-        <div class="wizard-container bg-white border border-slate-200 shadow-xl shadow-slate-100 rounded-3xl p-6 sm:p-8 md:p-10">
+        <div class="wizard-container wizard-panel rounded-3xl p-6 sm:p-8 md:p-10">
 
             <div id="step-1" class="step">
                 <div class="flex items-center gap-x-3 mb-6">
-                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <div class="w-9 h-9 step-badge rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">1</span>
                     </div>
                     <div>
                         <h2 class="section-header" tabindex="-1">Project Overview</h2>
-                        <p class="text-slate-600 text-sm">Tell us about the business and goals</p>
+                        <p class="text-rp-muted text-sm">Tell us about the business and goals</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="project-name" class="block text-sm font-medium text-slate-700 mb-1.5">Business / Project Name</label>
-                        <input type="text" id="project-name" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Raven Power LLC" autocomplete="organization">
+                        <label for="project-name" class="block text-sm font-medium text-rp-muted mb-1.5">Business / Project Name</label>
+                        <input type="text" id="project-name" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm" placeholder="RavenPower" autocomplete="organization">
                     </div>
                     <div>
-                        <label for="industry" class="block text-sm font-medium text-slate-700 mb-1.5">Industry / Niche</label>
-                        <input type="text" id="industry" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Professional Services / Consulting">
+                        <label for="industry" class="block text-sm font-medium text-rp-muted mb-1.5">Industry / Niche</label>
+                        <input type="text" id="industry" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm" placeholder="Professional Services / Consulting">
                     </div>
                     <div class="md:col-span-2">
-                        <label for="project-goals" class="block text-sm font-medium text-slate-700 mb-1.5">What is the main goal of this website?</label>
-                        <textarea id="project-goals" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Generate qualified leads, showcase expertise, support client onboarding..."></textarea>
+                        <label for="project-goals" class="block text-sm font-medium text-rp-muted mb-1.5">What is the main goal of this website?</label>
+                        <textarea id="project-goals" rows="3" class="form-input w-full border border-white/15 rounded-3xl px-4 py-3 text-sm" placeholder="Generate qualified leads, showcase expertise, support client onboarding..."></textarea>
                     </div>
                 </div>
             </div>
 
             <div id="step-2" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
-                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <div class="w-9 h-9 step-badge rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">2</span>
                     </div>
                     <div>
                         <h2 class="section-header" tabindex="-1">Target Audience</h2>
-                        <p class="text-slate-600 text-sm">Who are we designing for?</p>
+                        <p class="text-rp-muted text-sm">Who are we designing for?</p>
                     </div>
                 </div>
 
                 <div class="space-y-5">
                     <div>
-                        <label for="audience" class="block text-sm font-medium text-slate-700 mb-1.5">Primary Audience Description</label>
-                        <textarea id="audience" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Small business owners in Florida looking for AI and automation consulting..."></textarea>
+                        <label for="audience" class="block text-sm font-medium text-rp-muted mb-1.5">Primary Audience Description</label>
+                        <textarea id="audience" rows="3" class="form-input w-full border border-white/15 rounded-3xl px-4 py-3 text-sm" placeholder="Small business owners in Florida looking for AI and automation consulting..."></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label for="pain-points" class="block text-sm font-medium text-slate-700 mb-1.5">Key Pain Points</label>
-                            <input type="text" id="pain-points" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Time-consuming manual processes, lack of visibility...">
+                            <label for="pain-points" class="block text-sm font-medium text-rp-muted mb-1.5">Key Pain Points</label>
+                            <input type="text" id="pain-points" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm" placeholder="Time-consuming manual processes, lack of visibility...">
                         </div>
                         <div>
-                            <label for="desired-outcomes" class="block text-sm font-medium text-slate-700 mb-1.5">Desired Outcomes</label>
-                            <input type="text" id="desired-outcomes" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Clear next steps, trust in expertise, easy contact...">
+                            <label for="desired-outcomes" class="block text-sm font-medium text-rp-muted mb-1.5">Desired Outcomes</label>
+                            <input type="text" id="desired-outcomes" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm" placeholder="Clear next steps, trust in expertise, easy contact...">
                         </div>
                     </div>
                 </div>
@@ -215,35 +358,35 @@
 
             <div id="step-3" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
-                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <div class="w-9 h-9 step-badge rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">3</span>
                     </div>
                     <div>
                         <h2 class="section-header" tabindex="-1">Messaging &amp; Content Strategy</h2>
-                        <p class="text-slate-600 text-sm">Value prop, tone, and starter copy prompts</p>
+                        <p class="text-rp-muted text-sm">Value prop, tone, and starter copy prompts</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
-                        <label for="value-prop" class="block text-sm font-medium text-slate-700 mb-1.5">Core Value Proposition (one sentence)</label>
-                        <textarea id="value-prop" rows="2" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="We help ambitious professionals and businesses harness AI and automation to work smarter."></textarea>
+                        <label for="value-prop" class="block text-sm font-medium text-rp-muted mb-1.5">Core Value Proposition (one sentence)</label>
+                        <textarea id="value-prop" rows="2" class="form-input w-full border border-white/15 rounded-3xl px-4 py-3 text-sm" placeholder="We help ambitious professionals and businesses harness AI and automation to work smarter."></textarea>
                     </div>
                     <div>
-                        <label for="headline" class="block text-sm font-medium text-slate-700 mb-1.5">Homepage Headline Prompt</label>
-                        <input type="text" id="headline" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Clarity before code. Strategy before screens.">
+                        <label for="headline" class="block text-sm font-medium text-rp-muted mb-1.5">Homepage Headline Prompt</label>
+                        <input type="text" id="headline" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm" placeholder="Clarity before code. Strategy before screens.">
                     </div>
                     <div>
-                        <label for="cta" class="block text-sm font-medium text-slate-700 mb-1.5">Primary CTA Prompt</label>
-                        <input type="text" id="cta" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Book a discovery call">
+                        <label for="cta" class="block text-sm font-medium text-rp-muted mb-1.5">Primary CTA Prompt</label>
+                        <input type="text" id="cta" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm" placeholder="Book a discovery call">
                     </div>
                     <div>
-                        <label for="key-message" class="block text-sm font-medium text-slate-700 mb-1.5">Supporting Key Message</label>
-                        <input type="text" id="key-message" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm" placeholder="Practical AI systems that ship, not slide decks.">
+                        <label for="key-message" class="block text-sm font-medium text-rp-muted mb-1.5">Supporting Key Message</label>
+                        <input type="text" id="key-message" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm" placeholder="Practical AI systems that ship, not slide decks.">
                     </div>
                     <div>
-                        <label for="tone" class="block text-sm font-medium text-slate-700 mb-1.5">Tone &amp; Voice</label>
-                        <select id="tone" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm">
+                        <label for="tone" class="block text-sm font-medium text-rp-muted mb-1.5">Tone &amp; Voice</label>
+                        <select id="tone" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm">
                             <option value="Professional &amp; Approachable">Professional &amp; Approachable</option>
                             <option value="Expert &amp; Confident">Expert &amp; Confident</option>
                             <option value="Warm &amp; Supportive">Warm &amp; Supportive</option>
@@ -255,67 +398,68 @@
 
             <div id="step-4" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
-                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <div class="w-9 h-9 step-badge rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">4</span>
                     </div>
                     <div>
                         <h2 class="section-header" tabindex="-1">Key Features &amp; Site Structure</h2>
-                        <p class="text-slate-600 text-sm">Ordered page list, features, and technical needs</p>
+                        <p class="text-rp-muted text-sm">Ordered page list, features, and technical needs</p>
                     </div>
                 </div>
 
                 <div class="mb-5">
-                    <label for="new-page" class="block text-sm font-medium text-slate-700 mb-2">Must-have pages (sitemap order)</label>
+                    <label for="new-page" class="block text-sm font-medium text-rp-muted mb-2">Must-have pages (sitemap order)</label>
                     <div class="flex flex-wrap gap-2 min-h-[2rem]" id="pages-container" aria-live="polite"></div>
                     <div class="flex mt-3">
                         <input type="text" id="new-page" placeholder="Add a page (e.g. Services, About)"
-                               class="flex-1 border border-slate-300 rounded-l-2xl px-4 py-2.5 text-sm form-input"
+                               class="flex-1 border border-white/15 rounded-l-2xl px-4 py-2.5 text-sm form-input"
                                aria-describedby="page-hint">
-                        <button type="button" onclick="addPageChip()" class="px-5 bg-slate-900 text-white rounded-r-2xl text-sm font-medium">Add</button>
+                        <button type="button" onclick="addPageChip()" class="btn-primary px-5 rounded-r-2xl text-sm font-medium">Add</button>
                     </div>
-                    <p id="page-hint" class="text-xs text-slate-500 mt-2">Order matters — first page is treated as the homepage entry. Duplicates are ignored.</p>
+                    <p id="page-hint" class="text-xs text-rp-faint mt-2">Order matters — first page is treated as the homepage entry. Duplicates are ignored.</p>
                 </div>
 
                 <div class="mb-5">
-                    <label for="features" class="block text-sm font-medium text-slate-700 mb-2">Key Features / Functionality</label>
-                    <textarea id="features" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Lead capture forms, blog, client portal, booking calendar, case studies..."></textarea>
+                    <label for="features" class="block text-sm font-medium text-rp-muted mb-2">Key Features / Functionality</label>
+                    <textarea id="features" rows="3" class="form-input w-full border border-white/15 rounded-3xl px-4 py-3 text-sm" placeholder="Lead capture forms, blog, client portal, booking calendar, case studies..."></textarea>
                 </div>
 
                 <div>
-                    <label for="tech-requirements" class="block text-sm font-medium text-slate-700 mb-2">Technical Requirements</label>
-                    <textarea id="tech-requirements" rows="3" class="form-input w-full border border-slate-300 rounded-3xl px-4 py-3 text-sm" placeholder="Hosting (Vercel/Azure), CMS preference, integrations (HubSpot, Calendly), accessibility target, analytics..."></textarea>
+                    <label for="tech-requirements" class="block text-sm font-medium text-rp-muted mb-2">Technical Requirements</label>
+                    <textarea id="tech-requirements" rows="3" class="form-input w-full border border-white/15 rounded-3xl px-4 py-3 text-sm" placeholder="Hosting (Vercel/Azure), CMS preference, integrations (HubSpot, Calendly), accessibility target, analytics..."></textarea>
                 </div>
             </div>
 
             <div id="step-5" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
-                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <div class="w-9 h-9 step-badge rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">5</span>
                     </div>
                     <div>
                         <h2 class="section-header" tabindex="-1">Design Direction &amp; Branding</h2>
-                        <p class="text-slate-600 text-sm">Colors and overall visual vibe</p>
+                        <p class="text-rp-muted text-sm">Colors and overall visual vibe</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label for="primary-color" class="block text-sm font-medium text-slate-700 mb-2">Primary Color</label>
+                        <label for="primary-color" class="block text-sm font-medium text-rp-muted mb-2">Primary Color</label>
                         <div class="flex items-center gap-x-3">
-                            <input type="color" id="primary-color" value="#0f172a" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
-                            <input type="text" id="primary-color-hex" value="#0f172a" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Primary color hex" spellcheck="false">
+                            <input type="color" id="primary-color" value="#07080a" class="w-14 h-12 p-1 border border-white/15 rounded-2xl cursor-pointer">
+                            <input type="text" id="primary-color-hex" value="#07080a" class="form-input flex-1 border border-white/15 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Primary color hex" spellcheck="false">
                         </div>
                     </div>
                     <div>
-                        <label for="accent-color" class="block text-sm font-medium text-slate-700 mb-2">Accent Color</label>
+                        <label for="accent-color" class="block text-sm font-medium text-rp-muted mb-2">Accent Color</label>
                         <div class="flex items-center gap-x-3">
-                            <input type="color" id="accent-color" value="#334155" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
-                            <input type="text" id="accent-color-hex" value="#334155" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Accent color hex" spellcheck="false">
+                            <input type="color" id="accent-color" value="#56d08a" class="w-14 h-12 p-1 border border-white/15 rounded-2xl cursor-pointer">
+                            <input type="text" id="accent-color-hex" value="#56d08a" class="form-input flex-1 border border-white/15 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Accent color hex" spellcheck="false">
                         </div>
                     </div>
                     <div>
-                        <label for="vibe" class="block text-sm font-medium text-slate-700 mb-2">Overall Vibe</label>
-                        <select id="vibe" class="form-input w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm">
+                        <label for="vibe" class="block text-sm font-medium text-rp-muted mb-2">Overall Vibe</label>
+                        <select id="vibe" class="form-input w-full border border-white/15 rounded-2xl px-4 py-3 text-sm">
+                            <option value="RavenPower Dark" selected>RavenPower Dark</option>
                             <option value="Modern Minimal">Modern Minimal</option>
                             <option value="Warm Professional">Warm Professional</option>
                             <option value="Bold &amp; Confident">Bold &amp; Confident</option>
@@ -328,44 +472,44 @@
 
             <div id="step-6" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
-                    <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <div class="w-9 h-9 step-badge rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">6</span>
                     </div>
                     <div>
                         <h2 class="section-header" tabindex="-1">Review &amp; Export</h2>
-                        <p class="text-slate-600 text-sm">Live preview, structured brief, and JSON export</p>
+                        <p class="text-rp-muted text-sm">Live preview, structured brief, and JSON export</p>
                     </div>
                 </div>
 
-                <div id="live-preview" class="preview-shell rounded-3xl p-6 mb-6 text-white overflow-hidden border border-slate-800/20" style="--preview-primary:#0f172a; --preview-accent:#334155;">
+                <div id="live-preview" class="preview-shell rounded-3xl p-6 mb-6 text-white overflow-hidden border border-white/10" style="--preview-primary:#07080a; --preview-accent:#56d08a;">
                     <div class="text-xs uppercase tracking-[0.2em] text-white/70 mb-3">Live preview</div>
                     <div class="font-display text-3xl tracking-tight mb-2" id="preview-brand">Your Brand</div>
                     <p class="text-white/90 text-base max-w-xl mb-5" id="preview-headline">Your homepage headline will appear here.</p>
-                    <div class="inline-flex items-center gap-x-2 px-4 py-2 rounded-2xl text-sm font-semibold" id="preview-cta" style="background: color-mix(in srgb, var(--preview-accent) 85%, white); color: #0f172a;">
+                    <div class="inline-flex items-center gap-x-2 px-4 py-2 rounded-2xl text-sm font-semibold" id="preview-cta" style="background: color-mix(in srgb, var(--preview-accent) 85%, white); color: #04140b;">
                         Primary CTA
                     </div>
                     <div class="mt-6 flex flex-wrap gap-2 text-xs text-white/80" id="preview-pages"></div>
                 </div>
 
-                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6 mb-6">
+                <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-6">
                     <h3 class="font-semibold mb-3 flex items-center gap-x-2">
-                        <i class="fa-solid fa-file-export text-slate-700" aria-hidden="true"></i>
+                        <i class="fa-solid fa-file-export text-rp-accent" aria-hidden="true"></i>
                         <span>Design Brief Summary</span>
                     </h3>
-                    <div id="summary-preview" class="max-w-none text-slate-700 text-[13.5px] leading-relaxed"></div>
+                    <div id="summary-preview" class="max-w-none text-rp-muted text-[13.5px] leading-relaxed"></div>
                 </div>
 
-                <p id="export-status" class="text-sm text-slate-500 mb-3" aria-live="polite"></p>
+                <p id="export-status" class="text-sm text-rp-faint mb-3" aria-live="polite"></p>
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button type="button" onclick="exportJSON()"
-                            class="flex-1 flex items-center justify-center gap-x-2 bg-slate-900 hover:bg-black transition-colors text-white font-semibold py-3.5 rounded-2xl text-sm">
+                            class="btn-primary flex-1 flex items-center justify-center gap-x-2 font-semibold py-3.5 rounded-2xl text-sm">
                         <i class="fa-solid fa-download" aria-hidden="true"></i>
                         <span>Export as JSON</span>
                     </button>
 
                     <button type="button" id="copy-brief-btn" onclick="copyBrief(this)"
-                            class="flex-1 flex items-center justify-center gap-x-2 border border-slate-300 hover:bg-slate-50 transition-colors font-semibold py-3.5 rounded-2xl text-sm">
+                            class="btn-ghost flex-1 flex items-center justify-center gap-x-2 font-semibold py-3.5 rounded-2xl text-sm">
                         <i class="fa-solid fa-copy" aria-hidden="true"></i>
                         <span>Copy Design Brief (Markdown)</span>
                     </button>
@@ -376,29 +520,29 @@
 
         <div class="flex justify-between mt-8 max-w-[980px] mx-auto gap-3">
             <button type="button" onclick="prevStep()" id="btn-prev"
-                    class="px-6 py-3 rounded-2xl border border-slate-300 hover:bg-white font-medium inline-flex items-center gap-x-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+                    class="px-6 py-3 rounded-2xl border border-white/15 hover:bg-white font-medium inline-flex items-center gap-x-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed">
                 <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>Previous</span>
             </button>
 
             <button type="button" onclick="nextStep()" id="btn-next"
-                    class="px-8 py-3 bg-slate-900 hover:bg-black transition-colors text-white font-semibold rounded-2xl inline-flex items-center gap-x-2 text-sm">
+                    class="btn-primary px-8 py-3 rounded-2xl inline-flex items-center gap-x-2 text-sm">
                 <span id="next-btn-text">Continue</span> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
         </div>
     </div>
 
-    <footer class="text-center text-xs text-slate-500 pb-8 px-6">
-        Built with RavenClaude • Your form answers stay in this browser (draft autosave + export)
+    <footer class="text-center text-xs text-rp-faint pb-8 px-6">
+        Built by <span class="text-rp-muted">RavenPower</span> • Form answers stay in this browser (draft autosave + export)
         <span class="mx-1">•</span>
         Styling assets may load from CDNs
         <span class="mx-1">•</span>
-        <a href="how-it-works.html" class="underline hover:text-slate-700">How it works</a>
+        <a href="how-it-works.html" class="text-rp-accent hover:text-rp-accent2 underline underline-offset-2">How it works</a>
     </footer>
 
     <script>
         const STORAGE_KEY = 'designflow-draft-v1';
-        const DEFAULT_PRIMARY = '#0f172a';
-        const DEFAULT_ACCENT = '#334155';
+        const DEFAULT_PRIMARY = '#07080a';
+        const DEFAULT_ACCENT = '#56d08a';
         const HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
         let currentStep = 1;
@@ -529,7 +673,7 @@
             container.querySelectorAll('button').forEach((btn) => {
                 const i = Number(btn.dataset.step);
                 const active = i === currentStep;
-                btn.className = `px-4 py-1.5 text-xs font-medium transition-all rounded-2xl ${active ? 'nav-active' : 'bg-white border border-slate-200 hover:bg-slate-50'}`;
+                btn.className = `px-4 py-1.5 text-xs font-medium transition-all rounded-2xl ${active ? 'nav-active' : 'btn-ghost'}`;
                 if (active) btn.setAttribute('aria-current', 'step');
                 else btn.removeAttribute('aria-current');
             });
@@ -604,14 +748,14 @@
 
             pages.forEach((page, index) => {
                 const chip = document.createElement('div');
-                chip.className = 'inline-flex items-center bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-2xl';
+                chip.className = 'page-chip inline-flex items-center text-sm px-3 py-1 rounded-2xl';
 
                 const label = document.createElement('span');
                 label.textContent = page;
 
                 const removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
-                removeBtn.className = 'ml-2 text-slate-400 hover:text-red-500';
+                removeBtn.className = 'ml-2 text-rp-faint hover:text-red-400';
                 removeBtn.setAttribute('aria-label', `Remove ${page}`);
                 removeBtn.innerHTML = '<i class="fa-solid fa-xmark text-xs" aria-hidden="true"></i>';
                 removeBtn.addEventListener('click', () => removePageChip(index));
@@ -721,21 +865,21 @@
                 ${row('Project', data.projectName)}
                 ${row('Industry', data.industry)}
                 ${row('Goals', data.goals)}
-                <div class="pt-2 border-t border-slate-200"></div>
+                <div class="pt-2 border-t border-white/10"></div>
                 ${row('Audience', data.audience)}
                 ${row('Pain Points', data.painPoints)}
                 ${row('Desired Outcomes', data.desiredOutcomes)}
-                <div class="pt-2 border-t border-slate-200"></div>
+                <div class="pt-2 border-t border-white/10"></div>
                 ${row('Value Proposition', data.valueProp)}
                 ${row('Headline', data.headline)}
                 ${row('CTA', data.cta)}
                 ${row('Key Message', data.keyMessage)}
                 ${row('Tone', data.tone)}
-                <div class="pt-2 border-t border-slate-200"></div>
+                <div class="pt-2 border-t border-white/10"></div>
                 ${row('Key Pages', data.pages.length ? data.pages.join(', ') : '')}
                 ${row('Features', data.features)}
                 ${row('Technical Requirements', data.techRequirements)}
-                <div class="pt-2 border-t border-slate-200"></div>
+                <div class="pt-2 border-t border-white/10"></div>
                 ${row('Design Vibe', `${data.vibe} (${data.primaryColor} / ${data.accentColor})`)}
             </div>`;
         }
@@ -776,7 +920,7 @@
             brief += `## Features & Functionality\n${data.features || 'Not specified'}\n\n`;
             brief += `## Technical Requirements\n${data.techRequirements || 'Not specified'}\n\n`;
             brief += `## Design Direction\n- Vibe: ${data.vibe}\n- Primary: ${data.primaryColor}\n- Accent: ${data.accentColor}\n\n`;
-            brief += `---\n*Exported from DesignFlow by RavenClaude*`;
+            brief += `---\n*Exported from DesignFlow by RavenPower*`;
             return brief;
         }
 
@@ -811,8 +955,8 @@
 
         function loadExampleData() {
             applyFormData({
-                projectName: 'Raven Power LLC',
-                industry: 'AI Consulting & Power Platform Solutions',
+                projectName: 'RavenPower',
+                industry: 'AI systems & Microsoft Power Platform',
                 goals: 'Attract ideal clients, showcase deep expertise in Microsoft Power Platform and agentic AI, and make it easy to start conversations.',
                 audience: 'Business leaders, operations managers, and IT decision-makers in mid-market companies who are overwhelmed by manual processes and ready to modernize.',
                 painPoints: 'Unclear automation opportunities, scattered data, slow internal processes',
@@ -827,7 +971,7 @@
                 techRequirements: 'Static hosting (GitHub Pages or Vercel), accessible WCAG 2.2 AA, Calendly embed, HubSpot or form endpoint, analytics via Plausible',
                 primaryColor: DEFAULT_PRIMARY,
                 accentColor: '#475569',
-                vibe: 'Modern Minimal'
+                vibe: 'RavenPower Dark'
             });
             showStep(6);
             scheduleSave();
