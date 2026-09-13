@@ -303,14 +303,14 @@
                         <label for="primary-color" class="block text-sm font-medium text-slate-700 mb-2">Primary Color</label>
                         <div class="flex items-center gap-x-3">
                             <input type="color" id="primary-color" value="#0f172a" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
-                            <input type="text" id="primary-color-hex" value="#0f172a" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" spellcheck="false">
+                            <input type="text" id="primary-color-hex" value="#0f172a" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Primary color hex" spellcheck="false">
                         </div>
                     </div>
                     <div>
                         <label for="accent-color" class="block text-sm font-medium text-slate-700 mb-2">Accent Color</label>
                         <div class="flex items-center gap-x-3">
                             <input type="color" id="accent-color" value="#334155" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
-                            <input type="text" id="accent-color-hex" value="#334155" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" spellcheck="false">
+                            <input type="text" id="accent-color-hex" value="#334155" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Accent color hex" spellcheck="false">
                         </div>
                     </div>
                     <div>
@@ -473,7 +473,11 @@
         function resolveColor(kind) {
             const textVal = document.getElementById(`${kind}-color-hex`).value;
             const pickerVal = document.getElementById(`${kind}-color`).value;
-            return normalizeHex(textVal, true) || normalizeHex(pickerVal, true) || (kind === 'primary' ? DEFAULT_PRIMARY : DEFAULT_ACCENT);
+            // Prefer complete 6-digit typed values only. Do not expand 3-digit mid-entry
+            // (e.g. `#0f1`) into `#00ff11` during autosave — expansion happens on blur/export.
+            const asTyped = normalizeHex(textVal, false);
+            if (asTyped && asTyped.length === 7) return asTyped;
+            return normalizeHex(pickerVal, true) || (kind === 'primary' ? DEFAULT_PRIMARY : DEFAULT_ACCENT);
         }
 
         function commitColorsToInputs() {
@@ -504,7 +508,7 @@
             const prev = document.getElementById('btn-prev');
             prev.disabled = currentStep === 1;
             const nextBtn = document.getElementById('next-btn-text');
-            nextBtn.textContent = currentStep === totalSteps ? 'Back to export' : 'Continue';
+            nextBtn.textContent = currentStep === totalSteps ? 'Jump to export' : 'Continue';
         }
 
         function updateStepNav() {
