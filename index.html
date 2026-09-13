@@ -440,19 +440,21 @@
             return false;
         }
 
-        function normalizeHex(value) {
+        function normalizeHex(value, expandShort = true) {
             if (!value) return null;
             let hex = String(value).trim();
             if (!hex.startsWith('#')) hex = `#${hex}`;
             if (!HEX_RE.test(hex)) return null;
+            hex = hex.toLowerCase();
             if (hex.length === 4) {
+                if (!expandShort) return hex;
                 hex = `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
             }
-            return hex.toLowerCase();
+            return hex;
         }
 
         function setColorPair(kind, hex, markInvalid = false) {
-            const normalized = normalizeHex(hex);
+            const normalized = normalizeHex(hex, true);
             const picker = document.getElementById(`${kind}-color`);
             const text = document.getElementById(`${kind}-color-hex`);
             if (!normalized) {
@@ -463,6 +465,17 @@
             picker.value = normalized;
             text.value = normalized;
             return true;
+        }
+
+        function resolveColor(kind) {
+            const textVal = document.getElementById(`${kind}-color-hex`).value;
+            const pickerVal = document.getElementById(`${kind}-color`).value;
+            return normalizeHex(textVal, true) || normalizeHex(pickerVal, true) || (kind === 'primary' ? DEFAULT_PRIMARY : DEFAULT_ACCENT);
+        }
+
+        function commitColorsToInputs() {
+            setColorPair('primary', resolveColor('primary'), true);
+            setColorPair('accent', resolveColor('accent'), true);
         }
 
         function sanitizeFilename(name) {
@@ -607,20 +620,8 @@
             scheduleSave();
         }
 
-        function collectFormData() {
-            // Coerce invalid typed hex back to the last valid picker value before export/preview.
-            const primaryPicker = document.getElementById('primary-color').value;
-            const accentPicker = document.getElementById('accent-color').value;
-            if (!normalizeHex(document.getElementById('primary-color-hex').value)) {
-                setColorPair('primary', primaryPicker || DEFAULT_PRIMARY, true);
-            } else {
-                setColorPair('primary', document.getElementById('primary-color-hex').value, true);
-            }
-            if (!normalizeHex(document.getElementById('accent-color-hex').value)) {
-                setColorPair('accent', accentPicker || DEFAULT_ACCENT, true);
-            } else {
-                setColorPair('accent', document.getElementById('accent-color-hex').value, true);
-            }
+        function collectFormData({ commitColors = false } = {}) {
+            if (commitColors) commitColorsToInputs();
 
             return {
                 projectName: document.getElementById('project-name').value.trim(),
@@ -637,8 +638,8 @@
                 pages: [...pages],
                 features: document.getElementById('features').value.trim(),
                 techRequirements: document.getElementById('tech-requirements').value.trim(),
-                primaryColor: normalizeHex(document.getElementById('primary-color-hex').value) || DEFAULT_PRIMARY,
-                accentColor: normalizeHex(document.getElementById('accent-color-hex').value) || DEFAULT_ACCENT,
+                primaryColor: resolveColor('primary'),
+                accentColor: resolveColor('accent'),
                 vibe: document.getElementById('vibe').value,
                 timestamp: new Date().toISOString()
             };
@@ -703,7 +704,7 @@
 
         function generateSummary() {
             const summaryEl = document.getElementById('summary-preview');
-            const data = collectFormData();
+            const data = collectFormData({ commitColors: false });
             updateLivePreview(data);
 
             const row = (label, value) =>
@@ -733,7 +734,7 @@
         }
 
         function exportJSON() {
-            const data = collectFormData();
+            const data = collectFormData({ commitColors: true });
             const jsonStr = JSON.stringify(data, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -773,7 +774,7 @@
         }
 
         async function copyBrief(button) {
-            const data = collectFormData();
+            const data = collectFormData({ commitColors: true });
             const brief = buildBrief(data);
             const status = document.getElementById('export-status');
 
@@ -926,29 +927,52 @@
             const accentColor = document.getElementById('accent-color');
             const accentHex = document.getElementById('accent-color-hex');
 
+            function onHexInput(kind, textEl, pickerEl) {
+                const raw = textEl.value.trim();
+                const full = normalizeHex(raw, true);
+                if (full) {
+                    pickerEl.value = full;
+                    // Only rewrite the text field when the user finished a full 6-digit value.
+                    // Leave 3-digit shorthand alone until blur so typing `#0f172a` is possible.
+                    if (normalizeHex(raw, false) && normalizeHex(raw, false).length === 7) {
+                        textEl.value = full;
+                    }
+                    textEl.classList.remove('invalid');
+                    scheduleSave();
+                    return;
+                }
+                const incomplete = /^#?[0-9a-fA-F]{0,6}$/.test(raw);
+                if (incomplete) textEl.classList.remove('invalid');
+                else textEl.classList.add('invalid');
+            }
+
             primaryColor.addEventListener('input', () => {
                 primaryHex.value = primaryColor.value;
                 primaryHex.classList.remove('invalid');
                 scheduleSave();
             });
-            primaryHex.addEventListener('input', () => {
-                if (setColorPair('primary', primaryHex.value, true)) scheduleSave();
+            primaryHex.addEventListener('input', () => onHexInput('primary', primaryHex, primaryColor));
+            primaryHex.addEventListener('blur', () => {
+                setColorPair('primary', primaryHex.value || DEFAULT_PRIMARY, true);
+                scheduleSave();
             });
-            primaryHex.addEventListener('blur', () => setColorPair('primary', primaryHex.value || DEFAULT_PRIMARY, true));
 
             accentColor.addEventListener('input', () => {
                 accentHex.value = accentColor.value;
                 accentHex.classList.remove('invalid');
                 scheduleSave();
             });
-            accentHex.addEventListener('input', () => {
-                if (setColorPair('accent', accentHex.value, true)) scheduleSave();
+            accentHex.addEventListener('input', () => onHexInput('accent', accentHex, accentColor));
+            accentHex.addEventListener('blur', () => {
+                setColorPair('accent', accentHex.value || DEFAULT_ACCENT, true);
+                scheduleSave();
             });
-            accentHex.addEventListener('blur', () => setColorPair('accent', accentHex.value || DEFAULT_ACCENT, true));
         }
 
         function setupAutosaveListeners() {
+            const skipIds = new Set(['primary-color', 'primary-color-hex', 'accent-color', 'accent-color-hex']);
             fieldIds.forEach((id) => {
+                if (skipIds.has(id)) return;
                 const el = document.getElementById(id);
                 if (!el) return;
                 el.addEventListener('input', scheduleSave);

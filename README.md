@@ -29,7 +29,7 @@ The output is designed to be handed directly to a designer or AI builder (like R
 
 ## Files
 
-- `raven-logo.png` — optional brand logo (add your file here; both HTML pages fall back to an emoji if missing)
+- `raven-logo.png` — RavenClaude brand mark used in the header (emoji fallback remains if the file is removed)
 - `index.html` — The full interactive wizard
 - `how-it-works.html` — Documentation & repo guide
 - `README.md` — This file
