@@ -50,4 +50,4 @@ Want us to turn your exported blueprint into a production website? Just send the
 
 ---
 
-Made with care for clearer projects. Everything runs locally in your browser.
+Made with care for clearer projects. Form answers stay in your browser; styling assets may load from CDNs.

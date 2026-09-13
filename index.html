@@ -152,11 +152,11 @@
             </div>
         </div>
 
-        <div class="flex flex-wrap gap-2 mb-8 max-w-[980px] mx-auto" id="step-nav" role="tablist" aria-label="Wizard steps"></div>
+        <nav class="flex flex-wrap gap-2 mb-8 max-w-[980px] mx-auto" id="step-nav" aria-label="Wizard steps"></nav>
 
         <div class="wizard-container bg-white border border-slate-200 shadow-xl shadow-slate-100 rounded-3xl p-6 sm:p-8 md:p-10">
 
-            <div id="step-1" class="step" role="tabpanel">
+            <div id="step-1" class="step">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">1</span>
@@ -183,7 +183,7 @@
                 </div>
             </div>
 
-            <div id="step-2" class="step hidden" role="tabpanel">
+            <div id="step-2" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">2</span>
@@ -213,7 +213,7 @@
                 </div>
             </div>
 
-            <div id="step-3" class="step hidden" role="tabpanel">
+            <div id="step-3" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">3</span>
@@ -253,7 +253,7 @@
                 </div>
             </div>
 
-            <div id="step-4" class="step hidden" role="tabpanel">
+            <div id="step-4" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">4</span>
@@ -287,7 +287,7 @@
                 </div>
             </div>
 
-            <div id="step-5" class="step hidden" role="tabpanel">
+            <div id="step-5" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">5</span>
@@ -326,7 +326,7 @@
                 </div>
             </div>
 
-            <div id="step-6" class="step hidden" role="tabpanel">
+            <div id="step-6" class="step hidden">
                 <div class="flex items-center gap-x-3 mb-6">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-2xl flex items-center justify-center flex-shrink-0">
                         <span class="font-bold">6</span>
@@ -465,11 +465,6 @@
             return true;
         }
 
-        function syncColorsFromInputs() {
-            setColorPair('primary', document.getElementById('primary-color-hex').value, true);
-            setColorPair('accent', document.getElementById('accent-color-hex').value, true);
-        }
-
         function sanitizeFilename(name) {
             const cleaned = String(name || 'website-plan')
                 .toLowerCase()
@@ -504,7 +499,6 @@
                 for (let i = 1; i <= totalSteps; i++) {
                     const btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.setAttribute('role', 'tab');
                     btn.dataset.step = String(i);
                     btn.textContent = `${i}. ${stepTitles[i - 1]}`;
                     btn.addEventListener('click', () => goToStep(i));
@@ -518,7 +512,6 @@
                 btn.className = `px-4 py-1.5 text-xs font-medium transition-all rounded-2xl ${active ? 'nav-active' : 'bg-white border border-slate-200 hover:bg-slate-50'}`;
                 if (active) btn.setAttribute('aria-current', 'step');
                 else btn.removeAttribute('aria-current');
-                btn.setAttribute('aria-selected', active ? 'true' : 'false');
             });
         }
 
@@ -550,7 +543,11 @@
             }
             const status = document.getElementById('export-status');
             status.textContent = 'Brief ready — export JSON or copy the Markdown brief below.';
-            document.getElementById('copy-brief-btn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            document.getElementById('copy-brief-btn').scrollIntoView({
+                behavior: prefersReduced ? 'auto' : 'smooth',
+                block: 'center'
+            });
         }
 
         function prevStep() {
@@ -611,7 +608,20 @@
         }
 
         function collectFormData() {
-            syncColorsFromInputs();
+            // Coerce invalid typed hex back to the last valid picker value before export/preview.
+            const primaryPicker = document.getElementById('primary-color').value;
+            const accentPicker = document.getElementById('accent-color').value;
+            if (!normalizeHex(document.getElementById('primary-color-hex').value)) {
+                setColorPair('primary', primaryPicker || DEFAULT_PRIMARY, true);
+            } else {
+                setColorPair('primary', document.getElementById('primary-color-hex').value, true);
+            }
+            if (!normalizeHex(document.getElementById('accent-color-hex').value)) {
+                setColorPair('accent', accentPicker || DEFAULT_ACCENT, true);
+            } else {
+                setColorPair('accent', document.getElementById('accent-color-hex').value, true);
+            }
+
             return {
                 projectName: document.getElementById('project-name').value.trim(),
                 industry: document.getElementById('industry').value.trim(),
@@ -783,9 +793,11 @@
                 textarea.style.left = '-9999px';
                 document.body.appendChild(textarea);
                 textarea.select();
-                document.execCommand('copy');
+                const ok = document.execCommand('copy');
                 document.body.removeChild(textarea);
-                status.textContent = 'Design brief copied to clipboard.';
+                status.textContent = ok
+                    ? 'Design brief copied to clipboard.'
+                    : 'Could not copy automatically — select and copy the brief manually after export.';
             }
         }
 
@@ -857,12 +869,27 @@
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (!raw) return false;
                 const data = JSON.parse(raw);
+                if (!isDesignFlowPlan(data)) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    return false;
+                }
                 applyFormData(data);
                 if (data.currentStep) currentStep = Math.min(Math.max(Number(data.currentStep) || 1, 1), totalSteps);
                 return true;
             } catch (_) {
                 return false;
             }
+        }
+
+        function isDesignFlowPlan(data) {
+            if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+            const keys = [
+                'projectName', 'industry', 'goals', 'audience', 'painPoints', 'desiredOutcomes',
+                'valueProp', 'headline', 'cta', 'keyMessage', 'tone', 'pages', 'features',
+                'techRequirements', 'primaryColor', 'accentColor', 'vibe'
+            ];
+            const hit = keys.filter((k) => Object.prototype.hasOwnProperty.call(data, k)).length;
+            return hit >= 4;
         }
 
         function importJSON() {
@@ -878,6 +905,10 @@
             reader.onload = () => {
                 try {
                     const data = JSON.parse(String(reader.result));
+                    if (!isDesignFlowPlan(data)) {
+                        alert('That JSON does not look like a DesignFlow plan. Export from this wizard first, then import that file.');
+                        return;
+                    }
                     applyFormData(data);
                     showStep(6);
                     scheduleSave();
