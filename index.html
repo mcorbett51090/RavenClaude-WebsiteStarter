@@ -92,13 +92,13 @@
             </div>
 
             <div class="flex items-center gap-x-2 sm:gap-x-4 flex-shrink-0">
-                <a href="how-it-works.html"
+                <a href="how-it-works.html" id="link-how-it-works"
                    class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl hidden sm:inline-flex items-center gap-x-2">
                     <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
                     <span>How it works</span>
                 </a>
 
-                <button type="button" onclick="loadExampleData()"
+                <button type="button" id="btn-load-example"
                         class="px-3 sm:px-4 py-2 text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors rounded-2xl inline-flex items-center gap-x-2"
                         aria-label="Load Raven Power example data">
                     <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
@@ -106,14 +106,14 @@
                     <span class="md:hidden">Example</span>
                 </button>
 
-                <button type="button" onclick="importJSON()"
+                <button type="button" id="btn-import"
                         class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl inline-flex items-center gap-x-2"
                         aria-label="Import JSON plan">
                     <i class="fa-solid fa-file-import" aria-hidden="true"></i>
                     <span class="hidden sm:inline">Import</span>
                 </button>
 
-                <button type="button" onclick="resetForm()"
+                <button type="button" id="btn-reset"
                         class="px-3 py-2 text-sm font-medium border border-white/30 hover:bg-white/10 transition-colors rounded-2xl inline-flex items-center gap-x-2"
                         aria-label="Reset form">
                     <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
@@ -302,15 +302,15 @@
                     <div>
                         <label for="primary-color" class="block text-sm font-medium text-slate-700 mb-2">Primary Color</label>
                         <div class="flex items-center gap-x-3">
-                            <input type="color" id="primary-color" value="#0f172a" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer" aria-label="Primary color picker">
-                            <input type="text" id="primary-color-hex" value="#0f172a" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Primary color hex" spellcheck="false">
+                            <input type="color" id="primary-color" value="#0f172a" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
+                            <input type="text" id="primary-color-hex" value="#0f172a" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" spellcheck="false">
                         </div>
                     </div>
                     <div>
                         <label for="accent-color" class="block text-sm font-medium text-slate-700 mb-2">Accent Color</label>
                         <div class="flex items-center gap-x-3">
-                            <input type="color" id="accent-color" value="#334155" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer" aria-label="Accent color picker">
-                            <input type="text" id="accent-color-hex" value="#334155" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" aria-label="Accent color hex" spellcheck="false">
+                            <input type="color" id="accent-color" value="#334155" class="w-14 h-12 p-1 border border-slate-300 rounded-2xl cursor-pointer">
+                            <input type="text" id="accent-color-hex" value="#334155" class="form-input flex-1 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-mono" spellcheck="false">
                         </div>
                     </div>
                     <div>
@@ -435,8 +435,11 @@
         function isEditableTarget(el) {
             if (!el || el === document.body) return false;
             const tag = (el.tagName || '').toLowerCase();
-            if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+            if (tag === 'input' || tag === 'textarea' || tag === 'select' || tag === 'button' || tag === 'a' || tag === 'summary' || tag === 'option') {
+                return true;
+            }
             if (el.isContentEditable) return true;
+            if (el.closest && el.closest('button, a, [role="button"], [contenteditable="true"]')) return true;
             return false;
         }
 
@@ -501,7 +504,7 @@
             const prev = document.getElementById('btn-prev');
             prev.disabled = currentStep === 1;
             const nextBtn = document.getElementById('next-btn-text');
-            nextBtn.textContent = currentStep === totalSteps ? 'Finish' : 'Continue';
+            nextBtn.textContent = currentStep === totalSteps ? 'Back to export' : 'Continue';
         }
 
         function updateStepNav() {
@@ -663,8 +666,8 @@
             document.getElementById('tech-requirements').value = data.techRequirements || '';
             if (data.vibe) document.getElementById('vibe').value = data.vibe;
 
-            setColorPair('primary', data.primaryColor || DEFAULT_PRIMARY);
-            setColorPair('accent', data.accentColor || DEFAULT_ACCENT);
+            setColorPair('primary', data.primaryColor || DEFAULT_PRIMARY) || setColorPair('primary', DEFAULT_PRIMARY);
+            setColorPair('accent', data.accentColor || DEFAULT_ACCENT) || setColorPair('accent', DEFAULT_ACCENT);
 
             pages = Array.isArray(data.pages)
                 ? data.pages.map((p) => String(p).trim()).filter(Boolean)
@@ -929,14 +932,12 @@
 
             function onHexInput(kind, textEl, pickerEl) {
                 const raw = textEl.value.trim();
-                const full = normalizeHex(raw, true);
-                if (full) {
-                    pickerEl.value = full;
-                    // Only rewrite the text field when the user finished a full 6-digit value.
-                    // Leave 3-digit shorthand alone until blur so typing `#0f172a` is possible.
-                    if (normalizeHex(raw, false) && normalizeHex(raw, false).length === 7) {
-                        textEl.value = full;
-                    }
+                const asTyped = normalizeHex(raw, false);
+                // During typing, only sync the picker for a complete 6-digit value.
+                // 3-digit shorthand is expanded on blur so `#0f1` does not become `#00ff11` mid-entry.
+                if (asTyped && asTyped.length === 7) {
+                    pickerEl.value = asTyped;
+                    textEl.value = asTyped;
                     textEl.classList.remove('invalid');
                     scheduleSave();
                     return;
@@ -994,15 +995,39 @@
             setupAutosaveListeners();
             renderPageChips();
 
+            document.getElementById('btn-load-example').addEventListener('click', (e) => {
+                e.preventDefault();
+                loadExampleData();
+            });
+            document.getElementById('btn-import').addEventListener('click', (e) => {
+                e.preventDefault();
+                importJSON();
+            });
+            document.getElementById('btn-reset').addEventListener('click', (e) => {
+                e.preventDefault();
+                resetForm();
+            });
+
             const restored = restoreDraft();
             showStep(restored ? currentStep : 1, { focus: false });
 
             document.addEventListener('keydown', (e) => {
-                if (isEditableTarget(e.target)) return;
-                if (e.key === 'ArrowRight' && currentStep < totalSteps) nextStep();
-                if (e.key === 'ArrowLeft' && currentStep > 1) prevStep();
+                if (isEditableTarget(e.target) || isEditableTarget(document.activeElement)) return;
+                if (e.key === 'ArrowRight' && currentStep < totalSteps) {
+                    e.preventDefault();
+                    nextStep();
+                }
+                if (e.key === 'ArrowLeft' && currentStep > 1) {
+                    e.preventDefault();
+                    prevStep();
+                }
             });
         }
+
+        // Expose for manual/console testing
+        window.loadExampleData = loadExampleData;
+        window.importJSON = importJSON;
+        window.resetForm = resetForm;
 
         window.onload = init;
     </script>
